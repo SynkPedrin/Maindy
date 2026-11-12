@@ -1,0 +1,9 @@
+{
+  "platforms": ["apple", "android"],
+  "apple": {
+    "modules": ["MaindyNativeModule"]
+  },
+  "android": {
+    "modules": ["com.maindy.nativemodule.MaindyNativeModule"]
+  }
+}

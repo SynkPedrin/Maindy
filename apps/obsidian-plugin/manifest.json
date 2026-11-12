@@ -1,0 +1,9 @@
+{
+  "id": "maindy",
+  "name": "MAINDY",
+  "version": "0.1.0",
+  "minAppVersion": "1.5.0",
+  "description": "Sincroniza suas memórias da MAINDY com este vault e envia notas marcadas com #maindy para a sua assistente.",
+  "author": "MAINDY",
+  "isDesktopOnly": false
+}

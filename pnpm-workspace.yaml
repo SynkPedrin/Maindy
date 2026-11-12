@@ -1,0 +1,7 @@
+packages:
+  - "apps/api"
+  - "apps/mobile"
+  - "apps/web"
+  - "apps/brand-video"
+  - "apps/obsidian-plugin"
+  - "packages/*"

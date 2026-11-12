@@ -1,0 +1,21 @@
+{
+  "name": "@maindy/brand-video",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Composições Remotion da marca MAINDY (intro da hero e loop da esfera).",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "render": "node render.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4",
+    "react": "19",
+    "react-dom": "19",
+    "remotion": "4"
+  },
+  "devDependencies": {
+    "@types/react": "19",
+    "typescript": "~6.0.3"
+  }
+}

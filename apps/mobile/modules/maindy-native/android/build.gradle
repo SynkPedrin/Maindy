@@ -1,0 +1,22 @@
+plugins {
+  id 'com.android.library'
+  id 'expo-module-gradle-plugin'
+}
+
+group = 'com.maindy.nativemodule'
+version = '0.1.0'
+
+android {
+  namespace "com.maindy.nativemodule"
+  defaultConfig {
+    versionCode 1
+    versionName "0.1.0"
+  }
+  lintOptions {
+    abortOnError false
+  }
+}
+
+// androidx.core (NotificationCompat, ServiceCompat, NotificationManagerCompat) is exposed
+// transitively by expo-modules-core as an `api` dependency (androidx.core:core-ktx), so no
+// extra dependency is declared here.

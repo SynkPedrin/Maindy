@@ -1,0 +1,48 @@
+# secrets
+.env
+.env.*
+!.env.example
+.secrets/
+
+# deps / builds
+node_modules/
+dist/
+.turbo/
+coverage/
+*.tsbuildinfo
+
+# expo / native
+apps/mobile/.expo/
+apps/mobile/ios/
+apps/mobile/android/
+apps/mobile/dist/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# supabase local
+supabase/.branches/
+supabase/.temp/
+
+# local runtime data (user vaults never go to git)
+.maindy-data/
+tools/asset-gen/node_modules/
+
+.DS_Store
+
+# apps/web
+apps/web/.next/
+apps/web/.next-build/
+apps/obsidian-plugin/main.js
+apps/web/next-env.d.ts
+.pnpm-store/
+
+# native build outputs
+**/android/build/
+**/android/.gradle/
+**/android/.cxx/
+**/ios/build/
+*.apk
+*.aab
