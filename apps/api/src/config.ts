@@ -14,7 +14,9 @@ export interface AppConfig {
   voiceStudioUrl: string;
   elevenLabsApiKey: string | undefined;
   openAiApiKey: string | undefined;
-  embeddingsProvider: 'local' | 'none';
+  embeddingsProvider: 'local' | 'supabase' | 'none';
+  serviceRoleKey: string | null;
+  cronSecret: string | null;
   google: { clientId: string; clientSecret: string; redirectUri: string } | null;
   publicApiUrl: string;
   corsOrigins: string[];
@@ -57,7 +59,9 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     voiceStudioUrl: (env.VOICESTUDIO_URL ?? 'http://127.0.0.1:3900').replace(/\/+$/, ''),
     elevenLabsApiKey: env.ELEVENLABS_API_KEY?.trim() || undefined,
     openAiApiKey: env.OPENAI_API_KEY?.trim() || undefined,
-    embeddingsProvider: env.EMBEDDINGS_PROVIDER === 'none' ? 'none' : 'local',
+    embeddingsProvider: env.EMBEDDINGS_PROVIDER === 'none' ? 'none' : env.EMBEDDINGS_PROVIDER === 'supabase' ? 'supabase' : 'local',
+    serviceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY?.trim() || null,
+    cronSecret: env.CRON_SECRET?.trim() || null,
     google,
     publicApiUrl: env.PUBLIC_API_URL ?? `http://localhost:${port}`,
     corsOrigins: (env.CORS_ORIGINS ?? 'http://localhost:8081,http://localhost:3100').split(',').map((s) => s.trim()).filter(Boolean),

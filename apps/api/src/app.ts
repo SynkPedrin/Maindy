@@ -52,7 +52,8 @@ export async function buildApp(config: AppConfig, overrides: Partial<AppServices
       security: [{ bearer: [] }],
     },
   });
-  await app.register(swaggerUi, { routePrefix: '/docs' });
+  // the Swagger UI serves static files from its package folder (not available in the bundled serverless build)
+  if (process.env.MAINDY_DOCS !== 'off') await app.register(swaggerUi, { routePrefix: '/docs' });
 
   // Authentication: every /v1 route except the ones flagged public
   app.addHook('onRequest', async (req) => {

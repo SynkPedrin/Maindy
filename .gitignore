@@ -46,3 +46,4 @@ apps/web/next-env.d.ts
 **/ios/build/
 *.apk
 *.aab
+deploy/

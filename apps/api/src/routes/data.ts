@@ -110,7 +110,10 @@ export async function dataRoutes(app: FastifyInstance, s: AppServices) {
 
   app.get('/v1/vaults/export', { schema: { tags: ['vaults'], summary: 'Exporta o vault em .zip' } }, async (req, reply) => {
     const zip = await asUser(s, req, async (db, user) => {
-      const key = await new MemoryService(s, db, user).vaultKey();
+      const svc = new MemoryService(s, db, user);
+      const key = await svc.vaultKey();
+      // on serverless hosts the vault dir is ephemeral: rebuild it from the database first
+      await svc.sync();
       await S.audit(db, user.id, 'user', 'vault.exported', 'vault', key);
       return s.vault.exportZip(key);
     });

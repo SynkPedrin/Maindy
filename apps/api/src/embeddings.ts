@@ -54,6 +54,30 @@ export class LocalEmbeddingProvider implements EmbeddingProvider {
   }
 }
 
+/**
+ * Serverless deployments (Vercel): embeddings come from the Supabase Edge Function `embed`
+ * (built-in gte-small, 384 dims — same column size). Data stays inside the Supabase project.
+ */
+export class SupabaseEdgeEmbeddingProvider implements EmbeddingProvider {
+  readonly id = 'supabase';
+  readonly model = 'gte-small';
+  readonly dimensions = 384;
+  constructor(private readonly supabaseUrl: string, private readonly serviceKey: string) {}
+  ready() {
+    return true;
+  }
+  async embed(texts: string[]): Promise<number[][]> {
+    const res = await fetch(`${this.supabaseUrl}/functions/v1/embed`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${this.serviceKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ texts }),
+      signal: AbortSignal.timeout(15_000),
+    });
+    if (!res.ok) throw new Error(`embed function HTTP ${res.status}`);
+    return ((await res.json()) as { vectors: number[][] }).vectors;
+  }
+}
+
 /** Used when semantic search is disabled; retrieval falls back to full-text + entities. */
 export class NoEmbeddingProvider implements EmbeddingProvider {
   readonly id = 'none';

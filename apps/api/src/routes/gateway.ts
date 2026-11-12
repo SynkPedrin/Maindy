@@ -1,7 +1,9 @@
 import { createReadStream, existsSync, statSync } from 'node:fs';
 import path from 'node:path';
 import type { FastifyInstance } from 'fastify';
+import { timingSafeEqual } from 'node:crypto';
 import type { AppServices } from '../services.js';
+import { dispatchDueReminders } from '../scheduler.js';
 
 /**
  * Public gateway pieces used when the API is the only thing exposed to the internet
@@ -32,6 +34,17 @@ export async function gatewayRoutes(app: FastifyInstance, s: AppServices) {
     const ct = res.headers.get('content-type');
     if (ct) reply.header('content-type', ct);
     return Buffer.from(await res.arrayBuffer());
+  });
+
+  // Reminder dispatch for serverless hosts: called every minute by Supabase pg_cron (pg_net)
+  // with `x-cron-secret: <CRON_SECRET>`. Idempotent and safe to call concurrently (SKIP LOCKED).
+  app.post('/v1/internal/reminders/dispatch', { config: { public: true }, schema: { tags: ['system'], summary: 'Despacha lembretes vencidos (cron)' } }, async (req, reply) => {
+    const secret = s.config.cronSecret;
+    const got = Buffer.from(String(req.headers['x-cron-secret'] ?? ''));
+    if (!secret || got.length !== Buffer.byteLength(secret) || !timingSafeEqual(got, Buffer.from(secret))) {
+      return reply.code(403).send({ error: 'forbidden', message: 'forbidden' });
+    }
+    return dispatchDueReminders(s);
   });
 
   const dir = process.env.MAINDY_DOWNLOADS_DIR;

@@ -23,7 +23,7 @@ import type { FastifyBaseLogger } from 'fastify';
 import { AuthVerifier } from './auth.js';
 import type { AppConfig } from './config.js';
 import { Database, type Db, type UserClaims } from './db.js';
-import { LocalEmbeddingProvider, NoEmbeddingProvider, type EmbeddingProvider } from './embeddings.js';
+import { LocalEmbeddingProvider, NoEmbeddingProvider, SupabaseEdgeEmbeddingProvider, type EmbeddingProvider } from './embeddings.js';
 import { GoogleClient } from './integrations/google.js';
 import * as M from './repo/memories.js';
 import * as P from './repo/planning.js';
@@ -48,7 +48,13 @@ export function createServices(config: AppConfig, log: FastifyBaseLogger, overri
     config,
     db,
     auth: overrides.auth ?? new AuthVerifier(config.supabaseUrl, config.supabaseJwtSecret),
-    embeddings: overrides.embeddings ?? (config.embeddingsProvider === 'local' ? new LocalEmbeddingProvider() : new NoEmbeddingProvider()),
+    embeddings:
+      overrides.embeddings ??
+      (config.embeddingsProvider === 'local'
+        ? new LocalEmbeddingProvider()
+        : config.embeddingsProvider === 'supabase' && config.serviceRoleKey
+          ? new SupabaseEdgeEmbeddingProvider(config.supabaseUrl, config.serviceRoleKey)
+          : new NoEmbeddingProvider()),
     vault: overrides.vault ?? new VaultEngine(config.storageRoot),
     ai,
     voice:

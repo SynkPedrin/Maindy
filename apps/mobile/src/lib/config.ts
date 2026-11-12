@@ -24,7 +24,8 @@ export const DEFAULT_API_URL = str(extra.apiUrl) ?? `http://${devHost()}:4000`;
 const DEFAULT_SUPABASE_URL = str(extra.supabaseUrl) ?? (str(extra.apiUrl) ? DEFAULT_API_URL : `http://${devHost()}:54321`);
 
 let override: string | null = null;
-const KEY = 'maindy.server';
+// v2: builds pointing at the cloud ignore server overrides saved by older LAN test builds.
+const KEY = 'maindy.server.v2';
 
 export function apiUrl(): string {
   return override ?? DEFAULT_API_URL;
