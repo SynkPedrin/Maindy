@@ -40,9 +40,14 @@ export async function buildApp(config: AppConfig, overrides: Partial<AppServices
   await app.register(rateLimit, {
     max: 240,
     timeWindow: '1 minute',
+    // Auth gateway (login, signup, recover…) is always limited per client IP: keying it by the
+    // Authorization header would let a caller rotate fake headers to bypass the 30/min limit.
+    // Other routes key by token so users behind one NAT don't share a bucket; requests with an
+    // invalid token are rejected by the auth hook right after.
     keyGenerator: (req) => {
       const auth = req.headers.authorization;
-      return auth ? createHash('sha256').update(auth).digest('hex').slice(0, 32) : req.ip;
+      if (req.url.startsWith('/auth/') || !auth) return `ip:${req.ip}`;
+      return `tok:${createHash('sha256').update(auth).digest('hex').slice(0, 32)}`;
     },
   });
   await app.register(swagger, {

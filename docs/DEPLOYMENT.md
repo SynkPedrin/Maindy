@@ -41,7 +41,9 @@ npx eas build -p android --profile preview
 
 ## Vercel + Supabase na nuvem
 
-**Em produção hoje:** API em `https://maindy-api.vercel.app` (projeto Vercel `maindy-api`, região gru1); Supabase `maindy` criado pela integração da Vercel (Marketplace) e ligado ao projeto. APK em `https://maindy-api.vercel.app/download`.
+**Em produção hoje:** API em `https://maindy-api.vercel.app` (projeto Vercel `maindy-api`, região gru1); Supabase `maindy` criado pela integração da Vercel (Marketplace) e ligado ao projeto. APK em `https://maindy-api.vercel.app/download`. Versão web do app (Expo web) em `https://maindy-app.vercel.app` (projeto Vercel `maindy-app`, estático: `expo export -p web` com as variáveis `EXPO_PUBLIC_*` do `.env.cloud`, saída em `deploy/app/.vercel/output/static`, `vercel deploy --prebuilt --prod`).
+
+> `~/Documents` sincroniza com o iCloud Drive. Com o disco quase cheio, o iCloud tira arquivos de `node_modules` do disco e os builds travam com 0% de CPU. As pastas `node_modules` estão marcadas com o xattr `com.apple.fileprovider.ignore#P`. Se travar de novo, rode `find node_modules/.pnpm -flags +dataless | wc -l` e depois `pnpm install --force --offline`.
 
 Atalho para tudo isso: `node scripts/deploy-cloud.mjs`. O script é idempotente e faz, nesta ordem:
 - lê as variáveis da integração;

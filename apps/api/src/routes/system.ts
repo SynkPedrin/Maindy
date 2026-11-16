@@ -247,7 +247,7 @@ export async function systemRoutes(app: FastifyInstance, s: AppServices) {
 
   // ───────── devices ─────────
   app.post('/v1/devices', { schema: { tags: ['devices'], summary: 'Registra o aparelho e o token de push' } }, async (req, reply) => {
-    const body = parse(z.object({ platform: z.enum(['ios', 'android', 'web']), name: z.string().max(80).nullable().default(null), pushToken: z.string().max(300).nullable().default(null) }), req.body);
+    const body = parse(z.object({ platform: z.enum(['ios', 'android', 'web', 'macos']), name: z.string().max(80).nullable().default(null), pushToken: z.string().max(300).nullable().default(null) }), req.body);
     return idempotent(s, req, reply, 201, async (db, user) => {
       const { rows } = body.pushToken
         ? await db.query(
