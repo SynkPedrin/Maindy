@@ -3,7 +3,7 @@ import { Stack, router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Entrance } from '@/components/Entrance';
@@ -17,6 +17,9 @@ void SplashScreen.preventAutoHideAsync().catch(() => undefined);
 const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 20_000, retry: 1, refetchOnWindowFocus: true } },
 });
+
+// On wide browser windows the app is shown as a centered phone-width column.
+const WEB_COLUMN = Platform.OS === 'web' ? ({ flex: 1, width: '100%', maxWidth: 480, alignSelf: 'center', overflow: 'hidden' } as const) : { flex: 1 };
 
 export default function RootLayout() {
   const [entranceDone, setEntranceDone] = useState(false);
@@ -41,7 +44,7 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
           <StatusBar style="light" />
-          <View style={{ flex: 1 }}>
+          <View style={WEB_COLUMN}>
             {serverReady ? <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.navy }, animation: 'fade_from_bottom' }}>
               <Stack.Screen name="(tabs)" />
               <Stack.Screen name="memory/[id]" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
