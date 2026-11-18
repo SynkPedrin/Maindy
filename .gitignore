@@ -72,3 +72,5 @@ apps/web/.next.nosync/
 apps/web/.next
 apps/web/.next-*
 apps/web/.next*
+.env*
+!.env.example

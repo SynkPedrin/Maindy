@@ -1,0 +1,199 @@
+{
+  "case": "case-000-maindy",
+  "generatedAt": "2026-11-18T19:08:33.914Z",
+  "method": {
+    "step": "O — Observar (baseline, nenhuma otimização ativa)",
+    "source": "Transcrições locais do Claude Code (campo usage da API Anthropic por resposta, deduplicado por message id)",
+    "tokensSource": "provider_reported",
+    "costSource": "experimentally_estimated (tokens × preço de lista da tabela ORBIT; não é fatura — planos de assinatura são cobrados de outra forma)",
+    "pricingVersion": "2026-11-18",
+    "engineVersion": "0.1.0",
+    "replay": "compressToolOutput real sobre saídas Bash ≥ 2000 caracteres; mesmo gate do hook (≥200 tokens e ≥15%); tokens Claude estimados por caracteres/3,6",
+    "privacy": "Somente agregados. Nenhum texto de prompt, resposta ou saída de ferramenta é gravado."
+  },
+  "period": {
+    "from": "2026-11-12T15:03:28.268Z",
+    "to": "2026-11-18T19:08:33.379Z",
+    "sessions": 5
+  },
+  "totals": {
+    "requests": 1261,
+    "promptTokens": 475956887,
+    "uncachedInputTokens": 2722,
+    "cacheReadTokens": 471786247,
+    "cacheWriteTokens": 4167918,
+    "outputTokens": 1560624,
+    "cacheReadShare": 0.9912,
+    "listPriceUsd": 158.36,
+    "humanTurns": 43,
+    "avgPromptTokensPerRequest": 377444,
+    "requestsPerHumanTurn": 29.3,
+    "listPriceUsdPerHumanTurn": 3.68,
+    "costShare": {
+      "uncached": 0.0001,
+      "cacheRead": 0.5954,
+      "cacheWrite": 0.2083,
+      "output": 0.1962
+    }
+  },
+  "tools": {
+    "Bash": 961,
+    "AskUserQuestion": 4,
+    "Read": 142,
+    "Write": 267,
+    "Edit": 27,
+    "ToolSearch": 8,
+    "Skill": 2,
+    "Agent": 17,
+    "SendMessage": 37,
+    "Monitor": 1,
+    "ListAgents": 2,
+    "mcp__AgentsRoom-Chrome__chrome_list_browsers": 1,
+    "TaskStop": 2
+  },
+  "bashReplay": {
+    "outputs": 960,
+    "largeOutputs": 114,
+    "largeOutputTokensEst": 117602,
+    "compressibleOutputs": 2,
+    "savedTokensEst": 1803,
+    "note": "Economia contada uma única vez por saída. Na prática cada saída volta como contexto (cache) nas chamadas seguintes da sessão; o efeito real tende a ser maior, mas só será declarado quando medido."
+  },
+  "sessions": [
+    {
+      "session": "0c78196f",
+      "from": "2026-11-18T12:16:40.197Z",
+      "to": "2026-11-18T19:08:33.379Z",
+      "requests": 255,
+      "models": {
+        "claude-opus-5-5": 254,
+        "<synthetic>": 1
+      },
+      "promptTokens": 93723696,
+      "cacheReadTokens": 92608390,
+      "cacheWriteTokens": 1114787,
+      "outputTokens": 346028,
+      "listPriceUsd": 34.36,
+      "humanTurns": 5,
+      "avgPromptTokensPerRequest": 367544,
+      "bash": {
+        "outputs": 202,
+        "large": 33,
+        "largeChars": 136111,
+        "largeTokensEst": 37828,
+        "compressible": 0,
+        "savedTokensEst": 0,
+        "steps": {}
+      }
+    },
+    {
+      "session": "3e9ca148",
+      "from": "2026-11-12T15:03:28.268Z",
+      "to": "2026-11-16T02:09:11.484Z",
+      "requests": 473,
+      "models": {
+        "claude-haiku-5-5": 6,
+        "claude-opus-5-5": 465,
+        "<synthetic>": 2
+      },
+      "promptTokens": 194308565,
+      "cacheReadTokens": 193145880,
+      "cacheWriteTokens": 1161647,
+      "outputTokens": 563469,
+      "listPriceUsd": 58.63,
+      "humanTurns": 14,
+      "avgPromptTokensPerRequest": 410800,
+      "bash": {
+        "outputs": 353,
+        "large": 30,
+        "largeChars": 113509,
+        "largeTokensEst": 31545,
+        "compressible": 1,
+        "savedTokensEst": 237,
+        "steps": {
+          "shorten_rules": 1
+        }
+      }
+    },
+    {
+      "session": "a9cbe3f3",
+      "from": "2026-11-18T03:11:06.068Z",
+      "to": "2026-11-18T15:13:22.830Z",
+      "requests": 272,
+      "models": {
+        "claude-opus-5-5": 270,
+        "<synthetic>": 2
+      },
+      "promptTokens": 97115545,
+      "cacheReadTokens": 96268256,
+      "cacheWriteTokens": 846682,
+      "outputTokens": 266841,
+      "listPriceUsd": 31.37,
+      "humanTurns": 17,
+      "avgPromptTokensPerRequest": 357042,
+      "bash": {
+        "outputs": 217,
+        "large": 32,
+        "largeChars": 105769,
+        "largeTokensEst": 29396,
+        "compressible": 1,
+        "savedTokensEst": 1566,
+        "steps": {
+          "collapse_repeats": 1,
+          "collapse_near_duplicates": 1
+        }
+      }
+    },
+    {
+      "session": "ad0f07a9",
+      "from": "2026-11-12T15:20:18.543Z",
+      "to": "2026-11-16T02:09:12.840Z",
+      "requests": 259,
+      "models": {
+        "claude-opus-5-5": 258,
+        "<synthetic>": 1
+      },
+      "promptTokens": 90711750,
+      "cacheReadTokens": 89689032,
+      "cacheWriteTokens": 1022164,
+      "outputTokens": 383330,
+      "listPriceUsd": 33.78,
+      "humanTurns": 6,
+      "avgPromptTokensPerRequest": 350238,
+      "bash": {
+        "outputs": 187,
+        "large": 19,
+        "largeChars": 67766,
+        "largeTokensEst": 18833,
+        "compressible": 0,
+        "savedTokensEst": 0,
+        "steps": {}
+      }
+    },
+    {
+      "session": "c264082f",
+      "from": "2026-11-18T14:29:53.689Z",
+      "to": "2026-11-18T14:30:16.592Z",
+      "requests": 2,
+      "models": {
+        "claude-opus-5-5": 2
+      },
+      "promptTokens": 97331,
+      "cacheReadTokens": 74689,
+      "cacheWriteTokens": 22638,
+      "outputTokens": 956,
+      "listPriceUsd": 0.22,
+      "humanTurns": 1,
+      "avgPromptTokensPerRequest": 48666,
+      "bash": {
+        "outputs": 1,
+        "large": 0,
+        "largeChars": 0,
+        "largeTokensEst": 0,
+        "compressible": 0,
+        "savedTokensEst": 0,
+        "steps": {}
+      }
+    }
+  ]
+}

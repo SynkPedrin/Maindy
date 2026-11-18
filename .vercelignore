@@ -1,0 +1,17 @@
+node_modules
+**/node_modules
+**/.next
+**/.next *
+**/.next.nosync
+**/.next-*
+**/.turbo
+**/dist
+MAINDY_Codex_Kit
+releases
+apps/desktop/src-tauri/target
+docs/evidence
+test-results
+**/test-results
+.env
+.env.*
+!.env.example
