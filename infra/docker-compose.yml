@@ -1,0 +1,20 @@
+# Infra local de desenvolvimento da MAINDY. Não usar em produção.
+name: maindy
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: maindy
+      POSTGRES_PASSWORD: maindy_dev
+      POSTGRES_DB: maindy
+    ports: ["127.0.0.1:5433:5432"]
+    volumes: ["maindy_pg:/var/lib/postgresql/data", "./postgres-init:/docker-entrypoint-initdb.d:ro"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U maindy"]
+      interval: 3s
+      retries: 20
+  mailpit:
+    image: axllent/mailpit:v1.21
+    ports: ["127.0.0.1:1025:1025", "127.0.0.1:8025:8025"]
+volumes:
+  maindy_pg: {}

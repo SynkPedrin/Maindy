@@ -35,6 +35,7 @@ tools/asset-gen/node_modules/
 # apps/web
 apps/web/.next/
 apps/web/.next-build/
+apps/web/.next-prod/
 apps/obsidian-plugin/main.js
 apps/web/next-env.d.ts
 .pnpm-store/
@@ -47,3 +48,27 @@ apps/web/next-env.d.ts
 *.apk
 *.aab
 deploy/
+
+# maindy v2
+.next/
+apps/desktop/src-tauri/target/
+apps/desktop/src-tauri/binaries/
+apps/gateway/.data/
+playwright-report/
+test-results/
+releases/
+.pnpm-install.lock
+*.nosync/
+/node_modules
+apps/web/.next
+apps/desktop/src-tauri/target
+apps/web/.next-*/
+
+# third-party reference material (Kobi video, ChatGPT/Claude logos) — never redistributed; brand assets live in brand/
+MAINDY_Codex_Kit/
+# Vercel CLI link + iCloud-excluded Next build dirs
+.vercel
+apps/web/.next.nosync/
+apps/web/.next
+apps/web/.next-*
+apps/web/.next*

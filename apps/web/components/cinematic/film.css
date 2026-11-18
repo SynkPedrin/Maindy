@@ -1,0 +1,169 @@
+/* ───────────────── Cinematic film layout ─────────────────
+   film mode: sections are scroll spacers; their stage is fixed to the viewport while current.
+   flow mode (reduced motion / no JS): stages are normal blocks, everything visible. */
+
+.film { position: relative; z-index: 10; }
+
+.film-section { position: relative; height: calc(var(--len-d) * 100svh); }
+@media (max-width: 767px) { .film-section { height: calc(var(--len-m) * 100svh); } }
+
+.film-stage {
+  position: fixed; inset: 0; height: 100svh; width: 100%;
+  pointer-events: none; visibility: hidden;
+  display: flex; flex-direction: column;
+}
+.film-section[data-active] > .film-stage { visibility: visible; }
+/* before hydration only the opening shot may show */
+.film:not([data-ready]) .film-section:first-of-type > .film-stage { visibility: visible; }
+.film-stage :is(a, button, input, select, textarea, [role="slider"], [role="tab"], [data-interactive]) { pointer-events: auto; }
+
+.film-wmask { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.12em; margin-bottom: -0.12em; }
+
+/* flow mode: plain document */
+.film[data-mode="flow"] .film-section { height: auto; }
+.film[data-mode="flow"] .film-stage { position: relative; inset: auto; height: auto; min-height: 100svh; visibility: visible; pointer-events: auto; padding-block: 6rem; }
+.film[data-mode="flow"] [data-r], .film[data-mode="flow"] [data-w] { opacity: 1 !important; visibility: visible !important; transform: none !important; filter: none !important; }
+.film[data-mode="flow"] [data-film-only] { display: none !important; }
+.film:not([data-mode="flow"]) [data-flow-only] { display: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .film .film-section { height: auto; }
+  .film .film-stage { position: relative; inset: auto; height: auto; min-height: 100svh; visibility: visible; pointer-events: auto; padding-block: 6rem; }
+}
+
+/* Type system for the film */
+.film-display { font-weight: 560; letter-spacing: -0.05em; line-height: 0.92; text-wrap: balance; }
+.film-title { font-weight: 540; letter-spacing: -0.042em; line-height: 0.98; text-wrap: balance; }
+.film-serif { font-family: var(--font-serif), ui-serif, Georgia, serif; font-weight: 400; font-style: italic; letter-spacing: -0.02em; }
+.film-lead { text-wrap: pretty; }
+
+/* Soft text plate so copy stays legible over bright WebGL moments without a hard card */
+.film-plate { position: relative; }
+.film-plate::before {
+  content: ""; position: absolute; inset: -18% -12%; z-index: -1; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(5, 4, 23, 0.72), rgba(5, 4, 23, 0.36) 60%, rgba(5, 4, 23, 0.0));
+}
+
+/* Fallback (no WebGL / low profile): CSS orb layer driven by --s */
+.film-fallback { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; background: var(--m-bg); }
+.film-fallback__orb {
+  position: absolute; left: 50%; top: 46%; width: min(56vmin, 520px); aspect-ratio: 1;
+  transform: translate(-50%, -50%) translate(var(--ox, 0px), var(--oy, 0px)) scale(var(--os, 1));
+  opacity: var(--oo, 1); transition: opacity .3s;
+}
+.film-fallback__glow {
+  position: absolute; inset: -30%; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(164, 36, 255, .45), rgba(143, 32, 255, .12) 55%, transparent 72%),
+    radial-gradient(circle at 72% 22%, rgba(255, 178, 31, .28), transparent 42%);
+  filter: blur(30px); animation: mk-breathe 5.5s ease-in-out infinite;
+}
+
+/* Intro: skip control (the awakening itself happens in WebGL / CSS fallback) */
+.film-intro-skip { opacity: 0; pointer-events: none; transition: opacity .4s; }
+.film[data-intro] .film-intro-skip { opacity: 1; pointer-events: auto; }
+
+/* Scroll cue */
+@keyframes film-cue { 0% { transform: translateY(-100%); } 60%, 100% { transform: translateY(220%); } }
+.film-cue-line { animation: film-cue 2.2s var(--m-ease-in-out) infinite; }
+
+/* Progress rail */
+.film-rail a[aria-current="step"] .film-rail-dot { background: var(--m-fg); box-shadow: 0 0 14px rgba(199, 36, 255, .9); transform: scale(1.35); }
+.film-rail a[aria-current="step"] .film-rail-label { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .film-cue-line, .film-fallback__glow { animation: none !important; }
+}
+
+/* Hero entry (time-based, LCP-friendly). Fill-mode backwards so the scroll timeline owns the end state. */
+.film-rise { animation: mk-rise 1.15s var(--m-ease-out) backwards; animation-delay: var(--d, 0ms); }
+.film .mk-fade { animation-fill-mode: backwards; }
+
+/* Widget float (from the official demo: mHover) */
+@keyframes film-orb-float { 0%, 100% { transform: translateY(0) rotate(-1.4deg); } 50% { transform: translateY(-6px) rotate(1.4deg); } }
+.film-orb-float { animation: film-orb-float 3.6s ease-in-out infinite; }
+
+/* Product moments cross-fade */
+@keyframes film-moment { from { opacity: 0; transform: translateY(10px) scale(.985); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+.film-moment { animation: film-moment .6s var(--m-ease-out) both; }
+
+/* Download: the room dims around the action */
+.film-section:has(.film-cta:hover, .film-cta:focus-visible) .film-dim { background-color: rgba(2, 1, 14, .35); }
+.film-section { scroll-margin-top: calc(var(--len-d) * -16svh); }
+.film-section:first-of-type { scroll-margin-top: 0; }
+@media (max-width: 767px) { .film-section { scroll-margin-top: calc(var(--len-m) * -16svh); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .film-rise, .film-orb-float, .film-moment { animation: none !important; }
+}
+.film:not([data-mode="flow"]) .film-section { pointer-events: none; }
+.film-section:focus { outline: none; }
+
+.film-rail { pointer-events: none; }
+.film-rail a { pointer-events: auto; position: relative; padding: 4px; }
+.film-rail-label { position: absolute; right: calc(100% + 6px); top: 50%; translate: 0 -50%; white-space: nowrap; pointer-events: none; }
+
+/* ───────── Preloader ───────── */
+.mk-loading body { overflow: hidden; }
+.mk-loading .film-rise, .mk-loading .mk-fade { animation-play-state: paused !important; }
+.film-loader { transition: clip-path 1s cubic-bezier(.76, 0, .24, 1), opacity .6s ease .5s; clip-path: circle(150% at 50% 50%); }
+.film-loader.is-leaving { clip-path: circle(0% at 50% 50%); opacity: 0; }
+.film-loader-orb { animation: film-loader-breathe 2.4s ease-in-out infinite; }
+@keyframes film-loader-breathe { 0%, 100% { transform: scale(.94); filter: drop-shadow(0 0 10px rgba(164,36,255,.4)); } 50% { transform: scale(1.04); filter: drop-shadow(0 0 22px rgba(164,36,255,.8)); } }
+
+/* ───────── Cursor ───────── */
+html.film-has-cursor, html.film-has-cursor * { cursor: none !important; }
+.film-cursor { position: fixed; inset: 0; z-index: 100; pointer-events: none; }
+.film-cursor-dot, .film-cursor-ring { position: fixed; left: 0; top: 0; will-change: transform; }
+.film-cursor-dot { width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: #fff; mix-blend-mode: difference; }
+.film-cursor-ring {
+  width: 38px; height: 38px; margin: -19px 0 0 -19px; border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, .45);
+  display: flex; align-items: center; justify-content: center;
+  transition: width .35s cubic-bezier(.16,1,.3,1), height .35s cubic-bezier(.16,1,.3,1), margin .35s cubic-bezier(.16,1,.3,1), background-color .3s, border-color .3s;
+}
+.film-cursor-ring.is-hover { width: 58px; height: 58px; margin: -29px 0 0 -29px; border-color: rgba(199, 120, 255, .9); background: rgba(164, 36, 255, .12); }
+.film-cursor-ring.has-label { width: 84px; height: 84px; margin: -42px 0 0 -42px; background: rgba(250, 248, 255, .96); border-color: transparent; }
+.film-cursor-ring.is-orb { width: 84px; height: 84px; margin: -42px 0 0 -42px; border-color: rgba(255, 210, 31, .55); }
+.film-cursor-ring.is-orb::after { content: "Arraste"; font: 500 10px/1 var(--font-geist-mono), monospace; letter-spacing: .14em; text-transform: uppercase; color: #fff; }
+.film-cursor-ring.is-down { transform-origin: center; scale: .86; }
+.film-cursor-ring.is-drag { width: 26px; height: 26px; margin: -13px 0 0 -13px; background: rgba(255, 210, 31, .25); }
+.film-cursor-ring.is-drag::after { content: none; }
+.film-cursor-label { font: 500 10px/1 var(--font-geist-mono), monospace; letter-spacing: .12em; text-transform: uppercase; color: #080623; opacity: 0; transition: opacity .2s; white-space: nowrap; }
+.film-cursor-ring.has-label .film-cursor-label { opacity: 1; }
+
+/* ───────── Dock (sound / quality) ───────── */
+.film-dock-btn {
+  display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12); background: rgba(8,6,28,.82); color: var(--m-muted);
+  font-size: 12.5px; transition: color .2s, border-color .2s, background-color .2s;
+}
+.film-dock-btn:hover { color: var(--m-fg); border-color: rgba(255,255,255,.25); }
+.film-eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 12px; }
+.film-eq i { display: block; width: 2px; height: 3px; border-radius: 1px; background: currentColor; transition: height .3s; }
+.film-eq.is-on i { animation: film-eq 1.1s ease-in-out infinite; }
+.film-eq.is-on i:nth-child(2) { animation-delay: -.3s; } .film-eq.is-on i:nth-child(3) { animation-delay: -.6s; } .film-eq.is-on i:nth-child(4) { animation-delay: -.15s; }
+@keyframes film-eq { 0%, 100% { height: 3px; } 50% { height: 12px; } }
+
+/* ───────── Composition helpers ───────── */
+/* soft left scrim: the copy column always sits on calm, dark ground */
+.film-scrim-left::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(90deg, rgba(4,3,20,.82) 0%, rgba(4,3,20,.55) 34%, rgba(4,3,20,0) 58%);
+}
+@media (max-width: 1023px) {
+  .film-scrim-left::before { background: linear-gradient(0deg, rgba(4,3,20,.88) 0%, rgba(4,3,20,.6) 42%, rgba(4,3,20,0) 64%); }
+}
+.film-stage { isolation: isolate; }
+
+@media (prefers-reduced-motion: reduce) {
+  .film-loader { display: none; }
+  .film-eq.is-on i { animation: none; }
+}
+
+/* ───────── Tilt surfaces ───────── */
+.film-tilt { position: relative; transform: perspective(1400px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .5s cubic-bezier(.16,1,.3,1); transform-style: preserve-3d; }
+.film-tilt::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(520px circle at var(--gx, 50%) var(--gy, 50%), rgba(214, 170, 255, .10), transparent 45%);
+  opacity: var(--ga, 0); transition: opacity .4s;
+}
+@media (prefers-reduced-motion: reduce) { .film-tilt { transform: none !important; } }

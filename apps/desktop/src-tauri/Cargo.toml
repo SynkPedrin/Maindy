@@ -1,0 +1,54 @@
+[package]
+name = "maindy-desktop"
+version = "0.1.0"
+description = "maindy. — app desktop (launcher no notch, Quick Panel, painel e gateway local)"
+authors = ["maindy."]
+edition = "2021"
+rust-version = "1.80"
+publish = false
+
+[lib]
+name = "maindy_desktop_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[features]
+default = []
+# Compiles the Windows "pill" module on any OS so it can be type-checked locally (CI builds it for real on Windows).
+pill-preview = []
+# Auto-updater stays OFF until release signing keys exist (see README "Atualizações").
+updater = ["dep:tauri-plugin-updater"]
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon", "image-png", "macos-private-api"] }
+tauri-plugin-autostart = "2"
+tauri-plugin-notification = "2"
+tauri-plugin-single-instance = { version = "2", features = ["deep-link"] }
+tauri-plugin-opener = "2"
+tauri-plugin-window-state = "2"
+tauri-plugin-log = "2"
+tauri-plugin-updater = { version = "2", optional = true }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+tokio = { version = "1", features = ["time", "sync", "rt"] }
+keyring = { version = "3", features = ["apple-native", "windows-native"] }
+gethostname = "1"
+ctrlc = { version = "3", features = ["termination"] }
+log = "0.4"
+tauri-plugin-dialog = "2"
+tauri-plugin-deep-link = "2"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2 = "0.6"
+block2 = "0.6"
+objc2-foundation = { version = "0.3", features = ["NSGeometry", "NSNotification", "NSString", "NSArray", "NSObject", "NSOperation"] }
+objc2-app-kit = { version = "0.3", features = ["NSScreen", "NSWindow", "NSResponder", "NSApplication", "NSWorkspace", "NSEvent", "NSGraphics", "NSRunningApplication"] }
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true

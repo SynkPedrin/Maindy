@@ -1,0 +1,17 @@
+{
+  "name": "@maindy/integration-claude-code",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "maindy. × Claude Code: status line, PostToolUse hook and OTel installer",
+  "bin": {
+    "maindy-claude-code": "./bin/maindy-claude-code.mjs",
+    "maindy-statusline": "./bin/maindy-statusline.mjs",
+    "maindy-posttooluse": "./bin/maindy-posttooluse.mjs"
+  },
+  "files": ["bin", "src", "README.md"],
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "node -e \"for (const f of require('fs').readdirSync('bin').map(f=>'bin/'+f).concat(require('fs').readdirSync('src').filter(f=>!f.endsWith('.d.mts')).map(f=>'src/'+f))) require('child_process').execFileSync(process.execPath, ['--check', f], {stdio:'inherit'})\""
+  }
+}

@@ -1,0 +1,29 @@
+/* App-only styles (authenticated area). Kept out of globals.css, which belongs to the shared base. */
+
+/* The sidebar is always the refined black panel, even in light theme. */
+[data-theme="light"] .m-scope-dark {
+  --m-bg: #080623; --m-bg-deep: #050417;
+  --m-surface-1: #15112E; --m-surface-2: #1C1636; --m-surface-3: #251D45;
+  --m-line: rgba(190,183,214,.12); --m-line-strong: rgba(190,183,214,.22);
+  --m-violet: #8F20FF; --m-neon: #A424FF; --m-purple: #C724FF;
+  --m-gold: #FFD21F; --m-amber: #FFB21F;
+  --m-fg: #FAF8FF; --m-muted: #BEB7D6; --m-subtle: #8A83A8;
+  --m-success: #4FD1A1; --m-error: #FF7A6B; --m-warning: #FFC861;
+  color-scheme: dark;
+  color: var(--m-fg);
+}
+
+.m-num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "ss01" 1; letter-spacing: -0.02em; }
+
+.m-scroll-thin { scrollbar-width: thin; scrollbar-color: var(--m-line-strong) transparent; }
+
+/* recharts: inherit tokens */
+.m-chart .recharts-cartesian-grid line { stroke: var(--m-line); }
+.m-chart .recharts-text { fill: var(--m-subtle); font-size: 11px; font-family: var(--font-mono); }
+.m-chart .recharts-cartesian-axis-line, .m-chart .recharts-cartesian-axis-tick-line { stroke: var(--m-line); }
+.m-chart .recharts-tooltip-cursor { fill: color-mix(in oklab, var(--m-fg) 4%, transparent); stroke: var(--m-line-strong); }
+.m-chart :focus { outline: none; }
+
+/* Two-series comparison palette — validated with the dataviz validator (dark vs #15112E, light vs #FFFFFF). */
+:root { --m-chart-baseline: #B88A00; --m-chart-optimized: #A424FF; --m-chart-bar: #A424FF; }
+[data-theme="light"] { --m-chart-baseline: #B88A00; --m-chart-optimized: #7A12E6; --m-chart-bar: #7A12E6; }

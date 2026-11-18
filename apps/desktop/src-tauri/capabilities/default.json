@@ -1,0 +1,12 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Permissões mínimas: eventos, controle da própria janela e comandos maindy. Nenhum acesso a rede, fs ou shell a partir do webview.",
+  "windows": ["main", "notch", "quick", "pill"],
+  "permissions": [
+    "core:default",
+    "core:window:allow-start-dragging",
+    "core:window:allow-hide",
+    "core:window:allow-set-focus"
+  ]
+}

@@ -1,0 +1,198 @@
+name: desktop
+
+# Builds the maindy. desktop app (Tauri 2) for macOS (arm64 + x64) and Windows (x64 + arm64).
+# Signing/notarization steps run only when the corresponding secrets exist; otherwise the
+# artifacts are ad-hoc signed (macOS) or unsigned (Windows) and labeled as such.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/desktop/**"
+      - "apps/gateway/**"
+      - "packages/contracts/**"
+      - "packages/design-system/**"
+      - ".github/workflows/desktop.yml"
+  pull_request:
+    paths:
+      - "apps/desktop/**"
+      - ".github/workflows/desktop.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: desktop-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: rust tests + typecheck
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.9.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: apps/desktop/src-tauri
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @maindy/contracts build && pnpm --filter @maindy/design-system build
+      - run: pnpm --filter @maindy/desktop typecheck
+      - run: pnpm --filter @maindy/desktop build
+      - name: cargo test / clippy
+        working-directory: apps/desktop/src-tauri
+        run: |
+          cargo test
+          cargo clippy --all-targets -- -D warnings
+          cargo clippy --all-targets --features pill-preview -- -D warnings
+
+  build:
+    name: ${{ matrix.name }}
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macos-arm64
+            os: macos-14
+            target: aarch64-apple-darwin
+            bundles: app,dmg
+          - name: macos-x64
+            os: macos-14
+            target: x86_64-apple-darwin
+            bundles: app,dmg
+          - name: windows-x64
+            os: windows-latest
+            target: x86_64-pc-windows-msvc
+            bundles: nsis,msi
+          - name: windows-arm64
+            os: windows-latest
+            target: aarch64-pc-windows-msvc
+            bundles: nsis,msi
+    runs-on: ${{ matrix.os }}
+    env:
+      HAS_APPLE_CERT: ${{ secrets.APPLE_CERTIFICATE != '' }}
+      HAS_APPLE_NOTARY: ${{ secrets.APPLE_ID != '' && secrets.APPLE_PASSWORD != '' && secrets.APPLE_TEAM_ID != '' }}
+      HAS_WINDOWS_CERT: ${{ secrets.WINDOWS_CERTIFICATE != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.9.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: apps/desktop/src-tauri
+          key: ${{ matrix.target }}
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @maindy/contracts build && pnpm --filter @maindy/design-system build
+
+      - name: Build gateway bundle (if present)
+        shell: bash
+        run: |
+          if node -e "process.exit(require('./apps/gateway/package.json').scripts?.build ? 0 : 1)"; then
+            pnpm --filter @maindy/orbit-engine build || true
+            pnpm --filter @maindy/provider-adapters build || true
+            pnpm --filter @maindy/gateway build
+          else
+            echo "gateway sem script de build — app será empacotado sem sidecar"
+          fi
+
+      - name: Build gateway sidecar (Node SEA)
+        shell: bash
+        run: pnpm --filter @maindy/desktop build:sidecar --target ${{ matrix.target }} --no-smoke
+
+      # ---------------- macOS signing (only with secrets) ----------------
+      - name: Import Apple Developer ID certificate
+        if: runner.os == 'macOS' && env.HAS_APPLE_CERT == 'true'
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          echo "$APPLE_CERTIFICATE" | base64 --decode > cert.p12
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security import cert.p12 -k build.keychain -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" build.keychain
+          rm cert.p12
+          IDENTITY=$(security find-identity -v -p codesigning build.keychain | grep "Developer ID Application" | head -1 | sed -E 's/.*"(.+)"/\1/')
+          echo "APPLE_SIGNING_IDENTITY=$IDENTITY" >> "$GITHUB_ENV"
+
+      - name: Build (macOS)
+        if: runner.os == 'macOS'
+        env:
+          APPLE_ID: ${{ env.HAS_APPLE_NOTARY == 'true' && secrets.APPLE_ID || '' }}
+          APPLE_PASSWORD: ${{ env.HAS_APPLE_NOTARY == 'true' && secrets.APPLE_PASSWORD || '' }}
+          APPLE_TEAM_ID: ${{ env.HAS_APPLE_NOTARY == 'true' && secrets.APPLE_TEAM_ID || '' }}
+        run: pnpm --filter @maindy/desktop bundle --target ${{ matrix.target }} --bundles ${{ matrix.bundles }}
+
+      # ---------------- Windows signing (only with secrets) ----------------
+      - name: Import Windows code-signing certificate
+        if: runner.os == 'Windows' && env.HAS_WINDOWS_CERT == 'true'
+        shell: pwsh
+        env:
+          WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
+          WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
+        run: |
+          [IO.File]::WriteAllBytes("cert.pfx", [Convert]::FromBase64String($env:WINDOWS_CERTIFICATE))
+          $pwd = ConvertTo-SecureString -String $env:WINDOWS_CERTIFICATE_PASSWORD -AsPlainText -Force
+          $cert = Import-PfxCertificate -FilePath cert.pfx -CertStoreLocation Cert:\CurrentUser\My -Password $pwd
+          Remove-Item cert.pfx
+          "WINDOWS_THUMBPRINT=$($cert.Thumbprint)" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Build (Windows)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          EXTRA=""
+          if [ -n "${WINDOWS_THUMBPRINT:-}" ]; then
+            printf '{"bundle":{"windows":{"certificateThumbprint":"%s","digestAlgorithm":"sha256","timestampUrl":"http://timestamp.digicert.com"}}}' "$WINDOWS_THUMBPRINT" > apps/desktop/src-tauri/tauri.signing.conf.json
+            EXTRA="--config src-tauri/tauri.signing.conf.json"
+          fi
+          pnpm --filter @maindy/desktop bundle --target ${{ matrix.target }} --bundles ${{ matrix.bundles }} $EXTRA
+
+      - name: Collect artifacts + SHA-256
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT=dist-desktop/${{ matrix.name }}
+          mkdir -p "$OUT"
+          B=apps/desktop/src-tauri/target/${{ matrix.target }}/release/bundle
+          find "$B" -maxdepth 2 -type f \( -name '*.dmg' -o -name '*.msi' -o -name '*-setup.exe' \) -exec cp {} "$OUT/" \;
+          if [ "${{ runner.os }}" = "macOS" ]; then
+            if [ "${HAS_APPLE_CERT}" = "true" ]; then SIGN=developer_id; else SIGN=adhoc; fi
+            if [ "${HAS_APPLE_NOTARY}" = "true" ]; then SIGN=notarized; fi
+          else
+            if [ "${HAS_WINDOWS_CERT}" = "true" ]; then SIGN=authenticode; else SIGN=unsigned; fi
+          fi
+          cd "$OUT"
+          for f in *; do
+            if command -v sha256sum >/dev/null; then sha256sum "$f" > "$f.sha256"; else shasum -a 256 "$f" > "$f.sha256"; fi
+          done
+          echo "signing=$SIGN" > SIGNING.txt
+          ls -la
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: maindy-desktop-${{ matrix.name }}
+          path: dist-desktop/${{ matrix.name }}
+          if-no-files-found: error

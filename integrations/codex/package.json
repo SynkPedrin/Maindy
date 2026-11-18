@@ -1,0 +1,15 @@
+{
+  "name": "@maindy/integration-codex",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "maindy. × Codex CLI: OTel config installer and experimental app-server rate-limit reader",
+  "bin": {
+    "maindy-codex": "./bin/maindy-codex.mjs"
+  },
+  "files": ["bin", "src", "README.md"],
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "node -e \"for (const f of require('fs').readdirSync('bin').map(f=>'bin/'+f).concat(require('fs').readdirSync('src').filter(f=>!f.endsWith('.d.mts')).map(f=>'src/'+f))) require('child_process').execFileSync(process.execPath, ['--check', f], {stdio:'inherit'})\""
+  }
+}

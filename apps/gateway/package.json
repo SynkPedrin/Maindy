@@ -1,0 +1,30 @@
+{
+  "name": "@maindy/gateway",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@maindy/contracts": "workspace:^",
+    "@maindy/orbit-engine": "workspace:^",
+    "@maindy/provider-adapters": "workspace:^",
+    "fastify": "^5.12.8",
+    "undici": "^8.12.4",
+    "zod": "^4.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "tsx": "^4.23.15"
+  },
+  "bin": {
+    "maindy-gateway": "./dist/maindy-gateway.mjs"
+  },
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "start": "node dist/maindy-gateway.mjs",
+    "build": "node build.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:e2e": "node scripts/e2e-ollama.mjs",
+    "bench": "node --import tsx bench/run.ts"
+  }
+}

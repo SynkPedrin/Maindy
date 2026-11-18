@@ -7,6 +7,25 @@ on:
 jobs:
   checks:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: maindy
+          POSTGRES_PASSWORD: maindy_dev
+          POSTGRES_DB: maindy_test
+        ports: ["5433:5432"]
+        options: >-
+          --health-cmd "pg_isready -U maindy" --health-interval 3s --health-retries 20
+      mailpit:
+        image: axllent/mailpit:v1.21
+        ports: ["1025:1025", "8025:8025"]
+    env:
+      DATABASE_URL: postgres://maindy:maindy_dev@127.0.0.1:5433/maindy_test
+      TEST_DATABASE_URL: postgres://maindy:maindy_dev@127.0.0.1:5433/maindy_test
+      SMTP_URL: smtp://127.0.0.1:1025
+      WEB_PUBLIC_URL: http://localhost:3100
+      SESSION_SECRET: ci-only-not-secret-0000000000000000000000000000000000
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -17,49 +36,9 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @maindy/core build
+      - name: Build
+        run: pnpm turbo run build --filter=!@maindy/desktop
       - name: Typecheck
-        run: |
-          pnpm --filter @maindy/core typecheck
-          pnpm --filter @maindy/api typecheck
-          pnpm --filter @maindy/mobile typecheck
-          pnpm --filter @maindy/obsidian-plugin typecheck
-      - name: Unit tests
-        run: |
-          pnpm --filter @maindy/core test
-          pnpm --filter @maindy/api test
-          pnpm --filter @maindy/mobile test
-
-  e2e:
-    # Full stack: local Supabase (Docker) + API. VoiceStudio is not available on CI runners,
-    # so the voice scenario is skipped there (it runs on the developer Mac).
-    runs-on: ubuntu-latest
-    needs: checks
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 9.9.0
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @maindy/core build
-      - run: pnpm exec supabase start
-      - name: Write .env.local
-        run: |
-          S=$(pnpm exec supabase status -o json)
-          node -e '
-            const s = JSON.parse(process.argv[1]);
-            const c = require("crypto");
-            require("fs").writeFileSync(".env.local", [
-              `SUPABASE_URL=${s.API_URL}`, `SUPABASE_ANON_KEY=${s.ANON_KEY}`, `SUPABASE_SERVICE_ROLE_KEY=${s.SERVICE_ROLE_KEY}`,
-              `SUPABASE_JWT_SECRET=${s.JWT_SECRET}`, `DATABASE_URL=${s.DB_URL}`, `MAINDY_STORAGE_ROOT=${process.env.RUNNER_TEMP}/maindy`,
-              `MAINDY_CREDENTIALS_KEY=${c.randomBytes(32).toString("hex")}`, "API_PORT=4000", "VOICESTUDIO_URL=http://127.0.0.1:3900", ""].join("\n"));
-          ' "$S"
-      - run: (pnpm dev:api > api.log 2>&1 &) && npx wait-on -t 120000 http://127.0.0.1:4000/v1/health
-      - run: node scripts/dev-setup.mjs
-      - run: pnpm --filter @maindy/api exec vitest run test/e2e -t "^(?!.*voice).*$"
-      - if: failure()
-        run: tail -200 api.log
+        run: pnpm turbo run typecheck --filter=!@maindy/desktop
+      - name: Unit & integration tests
+        run: pnpm turbo run test --filter=!@maindy/desktop --filter=!@maindy/web

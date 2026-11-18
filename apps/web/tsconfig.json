@@ -4,19 +4,18 @@
     "lib": [
       "dom",
       "dom.iterable",
-      "es2023"
+      "ES2023"
     ],
     "allowJs": false,
     "skipLibCheck": true,
     "strict": true,
-    "noUncheckedIndexedAccess": true,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
     "plugins": [
       {
@@ -25,17 +24,23 @@
     ],
     "paths": {
       "@/*": [
-        "./src/*"
+        "./*"
       ]
     }
   },
   "include": [
+    "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "next-env.d.ts"
+    ".next/dev/types/**/*.ts",
+    ".next-preview/types/**/*.ts",
+    ".next-preview/dev/types/**/*.ts",
+    ".next-prod/types/**/*.ts",
+    ".next-prod/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "e2e"
   ]
 }

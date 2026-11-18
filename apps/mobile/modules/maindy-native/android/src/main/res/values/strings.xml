@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-  <string name="maindy_notification_listener_label">MAINDY – modos de foco</string>
-  <string name="maindy_floating_channel_name">Agente flutuante</string>
-  <string name="maindy_floating_channel_description">Mantém a bolha da MAINDY visível sobre outros apps.</string>
-  <string name="maindy_floating_notification_title">MAINDY está flutuando</string>
-  <string name="maindy_floating_notification_text">Toque na bolha para falar. Segure para usar a voz.</string>
-  <string name="maindy_floating_notification_remove">Remover</string>
-</resources>

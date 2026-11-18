@@ -1,72 +1,70 @@
-# MAINDY
+# maindy.
 
-Assistente pessoal com IA e segundo cérebro: guarda o que você diz (texto ou voz), lembra dias depois citando a origem, organiza tarefas, lembretes e agenda, e mantém um vault Obsidian por usuário.
+**Sua IA trabalha mais. Você gasta menos.**
+SaaS de economia e eficiência de IA, com agente desktop, gateway local e observabilidade. Powered by **ORBIT Engine™** (Observar · Reduzir · Balancear · Inteligência adaptativa · Testar).
 
-- **Mobile:** Expo SDK 58 / React Native 0.88 (iOS, Android e Web).
-- **API:** Fastify 5 + Supabase (Postgres 17, pgvector, RLS).
-- **IA:** Claude (SDK oficial), com modo offline quando não há chave.
-- **Voz:** VoiceStudio local, ElevenLabs ou OpenAI.
+> Status: v0.1, ambiente local de desenvolvimento. Nada está em produção. Veja [docs/ROADMAP.md](docs/ROADMAP.md) para o que falta e o que depende de credenciais externas.
 
-## Requisitos
-- macOS ou Linux com Node 22+ (testado com 24), pnpm 9 e Docker.
-- Opcional: VoiceStudio aberto (voz local), Xcode ou Android Studio (builds nativos).
+## O que existe
 
-## Instalar
+| Módulo | Caminho | Estado verificado |
+|---|---|---|
+| Landing page + páginas públicas | `apps/web/app/(marketing)` | `/`, `/metodologia`, `/precos`, `/termos`, `/privacidade`, `/ajuda` |
+| Cadastro, login, verificação de e-mail, dashboard | `apps/web/app/(auth)`, `apps/web/app/app` | 7/7 E2E Playwright |
+| Control plane (API REST + OpenAPI) | `apps/api` | 63 testes (Postgres real) |
+| Gateway local (data plane BYOK) | `apps/gateway` | 35 testes + E2E com Ollama real (17/17) |
+| Motor ORBIT | `packages/orbit-engine` | 90 testes |
+| Adapters OpenAI / Anthropic / OpenAI‑compatible | `packages/provider-adapters` | 23 testes |
+| Integração Claude Code (OTel, status line, hook) | `integrations/claude-code` | 27 testes |
+| Integração Codex (OTel) | `integrations/codex` | 12 testes |
+| App desktop (Tauri: notch macOS, pílula Windows, tray; todas as páginas funcionais) | `apps/desktop` | 42 testes Rust; `.dmg` arm64 instalado e testado ao vivo; Windows via CI |
+| Elo completo web → device → gateway → nuvem | `scripts/e2e-cloud-link.mjs` | 24/24 |
+
+## Resultado medido (Ollama real, `qwen3.5:4b`)
+
+Benchmark reproduzível: `pnpm --filter @maindy/gateway bench` → [docs/evidence/orbit-benchmark.md](docs/evidence/orbit-benchmark.md)
+
+| Carga | Tokens: Observar → Equilibrado | Qualidade |
+|---|---|---|
+| Agente de código com logs grandes | 7.698 → 3.995 (**−48,1%**) | mantida (3/3) |
+| Requisições determinísticas repetidas | 546 → 304 (**−44,3%**) | respostas idênticas (9/9) |
+| Chat com documento reenviado | 2.330 → 1.697 (**−27,2%**) | mantida (3/3) |
+| Controle (prompts únicos) | 0% (esperado) | mantida |
+| **Total** | 10.776 → 6.198 (**−42,5%**) | 100% |
+
+Reproduzido ao vivo pelo app desktop instalado: [docs/evidence/live-app-bench.md](docs/evidence/live-app-bench.md).
+
+Os números são tokens reportados pelo provedor. Valores em dinheiro só existem com provedores pagos; para Ollama o custo é 0 e a economia em dinheiro mostrada é 0.
+
+## Rodando localmente
+
+Pré-requisitos: Node 24, pnpm 9, Docker. Opcional: Ollama (provedor local gratuito), Rust (desktop).
+
 ```bash
 pnpm install
-pnpm --filter @maindy/core build
-pnpm db:start                         # Supabase local (aplica as migrations)
-cp .env.example .env.local            # preencha (veja docs/DEPLOYMENT.md); em dev:
-#   SUPABASE_* e DATABASE_URL  ← pnpm exec supabase status
-#   MAINDY_STORAGE_ROOT=~/MAINDY/development
-#   MAINDY_CREDENTIALS_KEY     ← openssl rand -hex 32
-#   ANTHROPIC_API_KEY          ← opcional (sem ela: modo offline)
+pnpm infra:up                               # Postgres :5433 + Mailpit :1025/:8025
+pnpm --filter @maindy/contracts build && pnpm --filter @maindy/design-system build
+pnpm --filter @maindy/api db:migrate && pnpm --filter @maindy/api db:seed
+pnpm --filter @maindy/api serve             # API :4100  (OpenAPI em /docs)
+pnpm --filter @maindy/web dev               # Web :3100
+pnpm --filter @maindy/gateway build && node apps/gateway/dist/maindy-gateway.mjs   # gateway :8787
 ```
 
-## Rodar
+E-mails de verificação chegam no Mailpit: http://localhost:8025. Billing roda em modo `sandbox` (rotulado; nenhum pagamento real).
+
+Usar o gateway em um app que fala OpenAI:
 ```bash
-pnpm dev:api                          # API em http://localhost:4000 (docs em /docs)
-node scripts/dev-setup.mjs            # usuários demo user-demo-001/002 + vaults (senhas no .env.local)
-pnpm master:create                    # usuário master (super@institutoalmada.org; senha no .env.local)
-pnpm dev:mobile                       # Metro: QR para o Expo Go no celular (mesmo Wi-Fi)
-pnpm --filter @maindy/mobile web      # ou no navegador: http://localhost:8081
+export OPENAI_BASE_URL=http://127.0.0.1:8787/v1
 ```
-Builds nativos (módulo do orb flutuante e widget iOS): `cd apps/mobile && npx expo run:ios` ou `npx expo run:android`.
 
-Antes do Android, exporte:
+## Testes
+
 ```bash
-export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
-export ANDROID_HOME=~/Library/Android/sdk
+pnpm turbo run test --filter=!@maindy/desktop --filter=!@maindy/web
+cd apps/web && BASE_URL=http://localhost:3100 pnpm exec playwright test
+node scripts/e2e-cloud-link.mjs             # elo completo com Ollama real
 ```
-
-## Testar
-```bash
-pnpm --filter @maindy/core test       # 54 testes (memória, tempo, permissões, vault, contrato Claude)
-pnpm --filter @maindy/api test        # unitários da API
-pnpm test:e2e                         # 18 cenários E2E contra a stack real (API + Supabase + vault + VoiceStudio)
-pnpm --filter @maindy/mobile typecheck
-```
-
-## Obsidian
-- Cada usuário tem um vault em `~/MAINDY/development/users/<uuid>/managed-vault`. Os links `user-demo-001` e `user-demo-002` facilitam o acesso.
-- No Obsidian: **Abrir pasta como vault** e escolha essa pasta.
-- Edições no Obsidian voltam para o app via **Ajustes › Vault › Sincronizar**.
-- Para conectar um vault que você já tem, use o plugin em `apps/obsidian-plugin`: `pnpm --filter @maindy/obsidian-plugin build` e copie `manifest.json` + `main.js` para `<vault>/.obsidian/plugins/maindy/`.
-
-## Testar no celular
-Veja **`docs/CELULAR.md`**: APK Android via `http://<IP-do-Mac>:4000/download` e iPhone via Expo Go, com o celular no mesmo Wi-Fi do Mac.
 
 ## Documentação
-| Documento | Assunto |
-|---|---|
-| `docs/ENVIRONMENT_AUDIT.md` | ambiente desta máquina |
-| `docs/VOICESTUDIO_AUDIT.md` | o que o VoiceStudio oferece e como foi integrado |
-| `docs/ARCHITECTURE.md` | módulos, fluxo do agente, memória, vault, voz e permissões |
-| `docs/DATABASE.md` | schema, RLS e usuário master |
-| `docs/API.md` | rotas |
-| `docs/SECURITY.md` | segurança e LGPD |
-| `docs/TESTING.md` | o que foi testado e o que não foi |
-| `docs/DEPLOYMENT.md` | produção, EAS e uso no celular |
-| `docs/KNOWN_LIMITATIONS.md` | limites de iOS e Android e integrações pendentes |
-| `docs/NATIVE.md` | módulos nativos Android e iOS |
-| `tools/asset-gen/README.md` | geração dos PNG da marca |
+
+[PRD](docs/PRD.md) · [Arquitetura](docs/ARCHITECTURE.md) · [Metodologia ORBIT](docs/ORBIT-METHODOLOGY.md) · [Matriz de integrações](docs/INTEGRATIONS-MATRIX.md) · [Design system](docs/DESIGN-SYSTEM.md) · [Segurança](docs/SECURITY.md) · [Roadmap](docs/ROADMAP.md) · [Auditoria inicial](docs/AUDIT.md) · [Evidências](docs/evidence/)

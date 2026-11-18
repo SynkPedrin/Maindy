@@ -1,0 +1,1496 @@
+{
+  "meta": {
+    "generatedAt": "2026-11-18T13:28:26.796Z",
+    "ollamaVersion": "0.40.16",
+    "model": "qwen3.5:4b",
+    "contextLimit": 4096,
+    "pricingVersion": "2026-11-18",
+    "platform": "darwin 25.6.0",
+    "cpu": "Apple M5",
+    "node": "v24.20.0",
+    "commit": "742a7e6",
+    "note": "Money values are a PRICE SIMULATION over measured tokens; Ollama itself costs 0."
+  },
+  "summary": [
+    {
+      "workload": "coding_agent_tool_logs",
+      "title": "Agente de código com saídas de ferramenta grandes e repetitivas",
+      "expectation": "tool_output_compression reduz tokens de entrada (ANSI, redraws de progresso, linhas repetidas, stack traces idênticos); o modelo deve continuar achando as respostas.",
+      "observe": {
+        "requests": 3,
+        "promptTokens": 7682,
+        "completionTokens": 16,
+        "totalTokens": 7698,
+        "latencyTotalMs": 15864,
+        "latencyMedianMs": 4951,
+        "cacheHits": 0,
+        "assertions": 3,
+        "assertionsPassed": 3,
+        "gatewayEstimatedTokensSaved": 0,
+        "techniquesApplied": [],
+        "truncationSuspected": false,
+        "simUsdMicros": {
+          "claude-sonnet-5-5": 15524,
+          "gpt-6.2-sol": 15524
+        }
+      },
+      "balanced": {
+        "requests": 3,
+        "promptTokens": 3979,
+        "completionTokens": 16,
+        "totalTokens": 3995,
+        "latencyTotalMs": 12779,
+        "latencyMedianMs": 5049,
+        "cacheHits": 0,
+        "assertions": 3,
+        "assertionsPassed": 3,
+        "gatewayEstimatedTokensSaved": 2106,
+        "techniquesApplied": [
+          "tool_output_compression"
+        ],
+        "truncationSuspected": false,
+        "simUsdMicros": {
+          "claude-sonnet-5-5": 8118,
+          "gpt-6.2-sol": 8118
+        }
+      },
+      "reduction": {
+        "promptTokensPct": 48.2,
+        "totalTokensPct": 48.1,
+        "latencyTotalPct": 19.4
+      },
+      "quality": {
+        "cacheHitsIdentical": "0/0",
+        "assertionsObserve": "3/3",
+        "assertionsBalanced": "3/3",
+        "sameAnswerAsObserve": "3/3"
+      },
+      "priceSimulation": {
+        "claude-sonnet-5-5": {
+          "baselineUsdMicros": 15524,
+          "optimizedUsdMicros": 8118,
+          "savedUsdMicros": 7406,
+          "savedPct": 47.7
+        },
+        "gpt-6.2-sol": {
+          "baselineUsdMicros": 15524,
+          "optimizedUsdMicros": 8118,
+          "savedUsdMicros": 7406,
+          "savedPct": 47.7
+        }
+      }
+    },
+    {
+      "workload": "repeated_deterministic_requests",
+      "title": "Agente que reenvia requisições determinísticas idênticas",
+      "expectation": "exact_cache serve as repetições localmente (0 tokens no provedor) com conteúdo idêntico ao original.",
+      "observe": {
+        "requests": 9,
+        "promptTokens": 525,
+        "completionTokens": 21,
+        "totalTokens": 546,
+        "latencyTotalMs": 5593,
+        "latencyMedianMs": 491,
+        "cacheHits": 0,
+        "assertions": 9,
+        "assertionsPassed": 9,
+        "gatewayEstimatedTokensSaved": 0,
+        "techniquesApplied": [],
+        "truncationSuspected": false,
+        "simUsdMicros": {
+          "claude-sonnet-5-5": 1260,
+          "gpt-6.2-sol": 1260
+        }
+      },
+      "balanced": {
+        "requests": 9,
+        "promptTokens": 293,
+        "completionTokens": 11,
+        "totalTokens": 304,
+        "latencyTotalMs": 3731,
+        "latencyMedianMs": 270,
+        "cacheHits": 4,
+        "assertions": 9,
+        "assertionsPassed": 9,
+        "gatewayEstimatedTokensSaved": 0,
+        "techniquesApplied": [
+          "exact_cache"
+        ],
+        "truncationSuspected": false,
+        "simUsdMicros": {
+          "claude-sonnet-5-5": 696,
+          "gpt-6.2-sol": 696
+        }
+      },
+      "reduction": {
+        "promptTokensPct": 44.2,
+        "totalTokensPct": 44.3,
+        "latencyTotalPct": 33.3
+      },
+      "quality": {
+        "cacheHitsIdentical": "4/4",
+        "assertionsObserve": "9/9",
+        "assertionsBalanced": "9/9",
+        "sameAnswerAsObserve": "9/9"
+      },
+      "priceSimulation": {
+        "claude-sonnet-5-5": {
+          "baselineUsdMicros": 1260,
+          "optimizedUsdMicros": 696,
+          "savedUsdMicros": 564,
+          "savedPct": 44.8
+        },
+        "gpt-6.2-sol": {
+          "baselineUsdMicros": 1260,
+          "optimizedUsdMicros": 696,
+          "savedUsdMicros": 564,
+          "savedPct": 44.8
+        }
+      }
+    },
+    {
+      "workload": "multiturn_duplicated_context",
+      "title": "Chat multi-turno com o mesmo documento colado várias vezes",
+      "expectation": "context_dedup substitui as cópias repetidas do documento por uma referência à primeira; respostas devem continuar corretas.",
+      "observe": {
+        "requests": 4,
+        "promptTokens": 2268,
+        "completionTokens": 62,
+        "totalTokens": 2330,
+        "latencyTotalMs": 8553,
+        "latencyMedianMs": 1475,
+        "cacheHits": 0,
+        "assertions": 3,
+        "assertionsPassed": 3,
+        "gatewayEstimatedTokensSaved": 0,
+        "techniquesApplied": [],
+        "truncationSuspected": false,
+        "simUsdMicros": {
+          "claude-sonnet-5-5": 5156,
+          "gpt-6.2-sol": 5156
+        }
+      },
+      "balanced": {
+        "requests": 4,
+        "promptTokens": 1635,
+        "completionTokens": 62,
+        "totalTokens": 1697,
+        "latencyTotalMs": 10087,
+        "latencyMedianMs": 1502,
+        "cacheHits": 0,
+        "assertions": 3,
+        "assertionsPassed": 3,
+        "gatewayEstimatedTokensSaved": 774,
+        "techniquesApplied": [
+          "context_dedup"
+        ],
+        "truncationSuspected": false,
+        "simUsdMicros": {
+          "claude-sonnet-5-5": 3890,
+          "gpt-6.2-sol": 3890
+        }
+      },
+      "reduction": {
+        "promptTokensPct": 27.9,
+        "totalTokensPct": 27.2,
+        "latencyTotalPct": -17.9
+      },
+      "quality": {
+        "cacheHitsIdentical": "0/0",
+        "assertionsObserve": "3/3",
+        "assertionsBalanced": "3/3",
+        "sameAnswerAsObserve": "4/4"
+      },
+      "priceSimulation": {
+        "claude-sonnet-5-5": {
+          "baselineUsdMicros": 5156,
+          "optimizedUsdMicros": 3890,
+          "savedUsdMicros": 1266,
+          "savedPct": 24.6
+        },
+        "gpt-6.2-sol": {
+          "baselineUsdMicros": 5156,
+          "optimizedUsdMicros": 3890,
+          "savedUsdMicros": 1266,
+          "savedPct": 24.6
+        }
+      }
+    },
+    {
+      "workload": "control_unique_short",
+      "title": "Controle: prompts curtos e únicos (ORBIT não deve ajudar)",
+      "expectation": "nenhuma técnica se aplica (sem repetição, sem saídas de ferramenta, sem duplicação): economia ~0. Serve para mostrar que o método não infla números.",
+      "observe": {
+        "requests": 6,
+        "promptTokens": 142,
+        "completionTokens": 60,
+        "totalTokens": 202,
+        "latencyTotalMs": 6411,
+        "latencyMedianMs": 607,
+        "cacheHits": 0,
+        "assertions": 6,
+        "assertionsPassed": 6,
+        "gatewayEstimatedTokensSaved": 0,
+        "techniquesApplied": [],
+        "truncationSuspected": false,
+        "simUsdMicros": {
+          "claude-sonnet-5-5": 884,
+          "gpt-6.2-sol": 884
+        }
+      },
+      "balanced": {
+        "requests": 6,
+        "promptTokens": 142,
+        "completionTokens": 60,
+        "totalTokens": 202,
+        "latencyTotalMs": 9994,
+        "latencyMedianMs": 1014,
+        "cacheHits": 0,
+        "assertions": 6,
+        "assertionsPassed": 6,
+        "gatewayEstimatedTokensSaved": 0,
+        "techniquesApplied": [],
+        "truncationSuspected": false,
+        "simUsdMicros": {
+          "claude-sonnet-5-5": 884,
+          "gpt-6.2-sol": 884
+        }
+      },
+      "reduction": {
+        "promptTokensPct": 0,
+        "totalTokensPct": 0,
+        "latencyTotalPct": -55.9
+      },
+      "quality": {
+        "cacheHitsIdentical": "0/0",
+        "assertionsObserve": "6/6",
+        "assertionsBalanced": "6/6",
+        "sameAnswerAsObserve": "6/6"
+      },
+      "priceSimulation": {
+        "claude-sonnet-5-5": {
+          "baselineUsdMicros": 884,
+          "optimizedUsdMicros": 884,
+          "savedUsdMicros": 0,
+          "savedPct": 0
+        },
+        "gpt-6.2-sol": {
+          "baselineUsdMicros": 884,
+          "optimizedUsdMicros": 884,
+          "savedUsdMicros": 0,
+          "savedPct": 0
+        }
+      }
+    }
+  ],
+  "rows": [
+    {
+      "workload": "coding_agent_tool_logs",
+      "request": "step1_install",
+      "mode": "observe",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "disabled",
+      "promptTokens": 1381,
+      "completionTokens": 4,
+      "usageSource": "provider_reported",
+      "latencyMs": 4951,
+      "techniques": [],
+      "answer": "412",
+      "assertion": "responde 412",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "coding_agent_tool_logs",
+      "request": "step2_tests",
+      "mode": "observe",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "disabled",
+      "promptTokens": 2756,
+      "completionTokens": 7,
+      "usageSource": "provider_reported",
+      "latencyMs": 6185,
+      "techniques": [],
+      "answer": "src/cart/discount.test.ts",
+      "assertion": "acha src/cart/discount.test.ts",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "coding_agent_tool_logs",
+      "request": "step3_retry",
+      "mode": "observe",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "disabled",
+      "promptTokens": 3545,
+      "completionTokens": 5,
+      "usageSource": "provider_reported",
+      "latencyMs": 4728,
+      "techniques": [],
+      "answer": "ECONNREFUSED",
+      "assertion": "acha ECONNREFUSED",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "repeated_deterministic_requests",
+      "request": "ticket1_round1",
+      "mode": "observe",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "disabled",
+      "promptTokens": 59,
+      "completionTokens": 2,
+      "usageSource": "provider_reported",
+      "latencyMs": 567,
+      "techniques": [],
+      "answer": "billing",
+      "assertion": "rótulo válido",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "repeated_deterministic_requests",
+      "request": "ticket2_round1",
+      "mode": "observe",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "disabled",
+      "promptTokens": 61,
+      "completionTokens": 2,
+      "usageSource": "provider_reported",
+      "latencyMs": 491,
+      "techniques": [],
+      "answer": "bug",
+      "assertion": "rótulo válido",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "repeated_deterministic_requests",
+      "request": "ticket3_round1",
+      "mode": "observe",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "disabled",
+      "promptTokens": 55,
+      "completionTokens": 3,
+      "usageSource": "provider_reported",
+      "latencyMs": 566,
+      "techniques": [],
+      "answer": "feature_request",
+      "assertion": "rótulo válido",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "repeated_deterministic_requests",
+      "request": "ticket1_round2",
+      "mode": "observe",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "disabled",
+      "promptTokens": 59,
+      "completionTokens": 2,
+      "usageSource": "provider_reported",
+      "latencyMs": 471,
+      "techniques": [],
+      "answer": "billing",
+      "assertion": "rótulo válido",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "repeated_deterministic_requests",
+      "request": "ticket2_round2",
+      "mode": "observe",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "disabled",
+      "promptTokens": 61,
+      "completionTokens": 2,
+      "usageSource": "provider_reported",
+      "latencyMs": 489,
+      "techniques": [],
+      "answer": "bug",
+      "assertion": "rótulo válido",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "repeated_deterministic_requests",
+      "request": "ticket3_round2",
+      "mode": "observe",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "disabled",
+      "promptTokens": 55,
+      "completionTokens": 3,
+      "usageSource": "provider_reported",
+      "latencyMs": 1260,
+      "techniques": [],
+      "answer": "feature_request",
+      "assertion": "rótulo válido",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "repeated_deterministic_requests",
+      "request": "ticket1_round3",
+      "mode": "observe",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "disabled",
+      "promptTokens": 59,
+      "completionTokens": 2,
+      "usageSource": "provider_reported",
+      "latencyMs": 957,
+      "techniques": [],
+      "answer": "billing",
+      "assertion": "rótulo válido",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "repeated_deterministic_requests",
+      "request": "ticket2_round3",
+      "mode": "observe",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "disabled",
+      "promptTokens": 61,
+      "completionTokens": 2,
+      "usageSource": "provider_reported",
+      "latencyMs": 376,
+      "techniques": [],
+      "answer": "bug",
+      "assertion": "rótulo válido",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "repeated_deterministic_requests",
+      "request": "ticket3_round3",
+      "mode": "observe",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "disabled",
+      "promptTokens": 55,
+      "completionTokens": 3,
+      "usageSource": "provider_reported",
+      "latencyMs": 416,
+      "techniques": [],
+      "answer": "feature_request",
+      "assertion": "rótulo válido",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "multiturn_duplicated_context",
+      "request": "turn1",
+      "mode": "observe",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "disabled",
+      "promptTokens": 303,
+      "completionTokens": 43,
+      "usageSource": "provider_reported",
+      "latencyMs": 4381,
+      "techniques": [],
+      "answer": "O reembolso integral é possível em até 30 dias após a entrega, desde que o produto esteja novo e na embalagem original, sendo feito no mesmo meio de pagamento com análise em até 3 dias úteis.",
+      "assertion": null,
+      "passed": null,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "multiturn_duplicated_context",
+      "request": "turn2",
+      "mode": "observe",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "disabled",
+      "promptTokens": 348,
+      "completionTokens": 14,
+      "usageSource": "provider_reported",
+      "latencyMs": 1223,
+      "techniques": [],
+      "answer": "Cartão de crédito, Pix e boleto por transferência bancária.",
+      "assertion": "cita Pix",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "multiturn_duplicated_context",
+      "request": "turn3_dup",
+      "mode": "observe",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "disabled",
+      "promptTokens": 658,
+      "completionTokens": 3,
+      "usageSource": "provider_reported",
+      "latencyMs": 1566,
+      "techniques": [],
+      "answer": "30",
+      "assertion": "responde 30",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "multiturn_duplicated_context",
+      "request": "turn4_dup2",
+      "mode": "observe",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "disabled",
+      "promptTokens": 959,
+      "completionTokens": 2,
+      "usageSource": "provider_reported",
+      "latencyMs": 1383,
+      "techniques": [],
+      "answer": "5",
+      "assertion": "responde 5",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "control_unique_short",
+      "request": "unique1",
+      "mode": "observe",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "disabled",
+      "promptTokens": 25,
+      "completionTokens": 2,
+      "usageSource": "provider_reported",
+      "latencyMs": 583,
+      "techniques": [],
+      "answer": "Cat",
+      "assertion": "responde cat",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "control_unique_short",
+      "request": "unique2",
+      "mode": "observe",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "disabled",
+      "promptTokens": 28,
+      "completionTokens": 3,
+      "usageSource": "provider_reported",
+      "latencyMs": 512,
+      "techniques": [],
+      "answer": "42",
+      "assertion": "responde 42",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "control_unique_short",
+      "request": "unique3",
+      "mode": "observe",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "disabled",
+      "promptTokens": 21,
+      "completionTokens": 3,
+      "usageSource": "provider_reported",
+      "latencyMs": 691,
+      "techniques": [],
+      "answer": "Tokyo",
+      "assertion": "responde Tokyo",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "control_unique_short",
+      "request": "unique4",
+      "mode": "observe",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "disabled",
+      "promptTokens": 25,
+      "completionTokens": 2,
+      "usageSource": "provider_reported",
+      "latencyMs": 450,
+      "techniques": [],
+      "answer": "No",
+      "assertion": "responde no",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "control_unique_short",
+      "request": "unique5",
+      "mode": "observe",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "disabled",
+      "promptTokens": 19,
+      "completionTokens": 48,
+      "usageSource": "provider_reported",
+      "latencyMs": 3544,
+      "techniques": [],
+      "answer": "The chemical symbol for sodium is **Na**.\n\nThis symbol comes from its Latin name, *Natrium*. In the periodic table, it has the atomic number 11 and belongs to Group 1 (alkali metals).",
+      "assertion": "responde Na",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "control_unique_short",
+      "request": "unique6",
+      "mode": "observe",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "disabled",
+      "promptTokens": 24,
+      "completionTokens": 2,
+      "usageSource": "provider_reported",
+      "latencyMs": 631,
+      "techniques": [],
+      "answer": "cba",
+      "assertion": "responde cba",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "coding_agent_tool_logs",
+      "request": "step1_install",
+      "mode": "balanced",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "miss",
+      "promptTokens": 628,
+      "completionTokens": 4,
+      "usageSource": "provider_reported",
+      "latencyMs": 2446,
+      "techniques": [
+        {
+          "name": "tool_output_compression",
+          "applied": true,
+          "tokensSaved": 504,
+          "source": "experimentally_estimated"
+        },
+        {
+          "name": "context_dedup",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "experimentally_estimated"
+        },
+        {
+          "name": "prompt_cache_hints",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "exact_cache",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        }
+      ],
+      "answer": "412",
+      "assertion": "responde 412",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "coding_agent_tool_logs",
+      "request": "step2_tests",
+      "mode": "balanced",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "miss",
+      "promptTokens": 1407,
+      "completionTokens": 7,
+      "usageSource": "provider_reported",
+      "latencyMs": 5049,
+      "techniques": [
+        {
+          "name": "tool_output_compression",
+          "applied": true,
+          "tokensSaved": 680,
+          "source": "experimentally_estimated"
+        },
+        {
+          "name": "context_dedup",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "experimentally_estimated"
+        },
+        {
+          "name": "prompt_cache_hints",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "exact_cache",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        }
+      ],
+      "answer": "src/cart/discount.test.ts",
+      "assertion": "acha src/cart/discount.test.ts",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "coding_agent_tool_logs",
+      "request": "step3_retry",
+      "mode": "balanced",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "miss",
+      "promptTokens": 1944,
+      "completionTokens": 5,
+      "usageSource": "provider_reported",
+      "latencyMs": 5284,
+      "techniques": [
+        {
+          "name": "tool_output_compression",
+          "applied": true,
+          "tokensSaved": 922,
+          "source": "experimentally_estimated"
+        },
+        {
+          "name": "context_dedup",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "experimentally_estimated"
+        },
+        {
+          "name": "prompt_cache_hints",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "exact_cache",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        }
+      ],
+      "answer": "ECONNREFUSED",
+      "assertion": "acha ECONNREFUSED",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "repeated_deterministic_requests",
+      "request": "ticket1_round1",
+      "mode": "balanced",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "bypass",
+      "promptTokens": 59,
+      "completionTokens": 2,
+      "usageSource": "provider_reported",
+      "latencyMs": 1328,
+      "techniques": [
+        {
+          "name": "tool_output_compression",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "context_dedup",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "experimentally_estimated"
+        },
+        {
+          "name": "prompt_cache_hints",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        }
+      ],
+      "answer": "billing",
+      "assertion": "rótulo válido",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "repeated_deterministic_requests",
+      "request": "ticket2_round1",
+      "mode": "balanced",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "miss",
+      "promptTokens": 61,
+      "completionTokens": 2,
+      "usageSource": "provider_reported",
+      "latencyMs": 322,
+      "techniques": [
+        {
+          "name": "tool_output_compression",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "context_dedup",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "experimentally_estimated"
+        },
+        {
+          "name": "prompt_cache_hints",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "exact_cache",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        }
+      ],
+      "answer": "bug",
+      "assertion": "rótulo válido",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "repeated_deterministic_requests",
+      "request": "ticket3_round1",
+      "mode": "balanced",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "miss",
+      "promptTokens": 55,
+      "completionTokens": 3,
+      "usageSource": "provider_reported",
+      "latencyMs": 622,
+      "techniques": [
+        {
+          "name": "tool_output_compression",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "context_dedup",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "experimentally_estimated"
+        },
+        {
+          "name": "prompt_cache_hints",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "exact_cache",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        }
+      ],
+      "answer": "feature_request",
+      "assertion": "rótulo válido",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "repeated_deterministic_requests",
+      "request": "ticket1_round2",
+      "mode": "balanced",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "bypass",
+      "promptTokens": 59,
+      "completionTokens": 2,
+      "usageSource": "provider_reported",
+      "latencyMs": 920,
+      "techniques": [
+        {
+          "name": "tool_output_compression",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "context_dedup",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "experimentally_estimated"
+        },
+        {
+          "name": "prompt_cache_hints",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        }
+      ],
+      "answer": "billing",
+      "assertion": "rótulo válido",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "repeated_deterministic_requests",
+      "request": "ticket2_round2",
+      "mode": "balanced",
+      "httpStatus": 200,
+      "eventStatus": "cache_hit",
+      "cache": "hit",
+      "promptTokens": 0,
+      "completionTokens": 0,
+      "usageSource": "locally_measured",
+      "latencyMs": 65,
+      "techniques": [
+        {
+          "name": "exact_cache",
+          "applied": true,
+          "tokensSaved": 63,
+          "source": "provider_reported"
+        }
+      ],
+      "answer": "bug",
+      "assertion": "rótulo válido",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "repeated_deterministic_requests",
+      "request": "ticket3_round2",
+      "mode": "balanced",
+      "httpStatus": 200,
+      "eventStatus": "cache_hit",
+      "cache": "hit",
+      "promptTokens": 0,
+      "completionTokens": 0,
+      "usageSource": "locally_measured",
+      "latencyMs": 113,
+      "techniques": [
+        {
+          "name": "exact_cache",
+          "applied": true,
+          "tokensSaved": 58,
+          "source": "provider_reported"
+        }
+      ],
+      "answer": "feature_request",
+      "assertion": "rótulo válido",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "repeated_deterministic_requests",
+      "request": "ticket1_round3",
+      "mode": "balanced",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "bypass",
+      "promptTokens": 59,
+      "completionTokens": 2,
+      "usageSource": "provider_reported",
+      "latencyMs": 270,
+      "techniques": [
+        {
+          "name": "tool_output_compression",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "context_dedup",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "experimentally_estimated"
+        },
+        {
+          "name": "prompt_cache_hints",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        }
+      ],
+      "answer": "billing",
+      "assertion": "rótulo válido",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "repeated_deterministic_requests",
+      "request": "ticket2_round3",
+      "mode": "balanced",
+      "httpStatus": 200,
+      "eventStatus": "cache_hit",
+      "cache": "hit",
+      "promptTokens": 0,
+      "completionTokens": 0,
+      "usageSource": "locally_measured",
+      "latencyMs": 33,
+      "techniques": [
+        {
+          "name": "exact_cache",
+          "applied": true,
+          "tokensSaved": 63,
+          "source": "provider_reported"
+        }
+      ],
+      "answer": "bug",
+      "assertion": "rótulo válido",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "repeated_deterministic_requests",
+      "request": "ticket3_round3",
+      "mode": "balanced",
+      "httpStatus": 200,
+      "eventStatus": "cache_hit",
+      "cache": "hit",
+      "promptTokens": 0,
+      "completionTokens": 0,
+      "usageSource": "locally_measured",
+      "latencyMs": 58,
+      "techniques": [
+        {
+          "name": "exact_cache",
+          "applied": true,
+          "tokensSaved": 58,
+          "source": "provider_reported"
+        }
+      ],
+      "answer": "feature_request",
+      "assertion": "rótulo válido",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "multiturn_duplicated_context",
+      "request": "turn1",
+      "mode": "balanced",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "miss",
+      "promptTokens": 303,
+      "completionTokens": 43,
+      "usageSource": "provider_reported",
+      "latencyMs": 6327,
+      "techniques": [
+        {
+          "name": "tool_output_compression",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "context_dedup",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "experimentally_estimated"
+        },
+        {
+          "name": "prompt_cache_hints",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "exact_cache",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        }
+      ],
+      "answer": "O reembolso integral é possível em até 30 dias após a entrega, desde que o produto esteja novo e na embalagem original, sendo feito no mesmo meio de pagamento com análise em até 3 dias úteis.",
+      "assertion": null,
+      "passed": null,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "multiturn_duplicated_context",
+      "request": "turn2",
+      "mode": "balanced",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "miss",
+      "promptTokens": 348,
+      "completionTokens": 14,
+      "usageSource": "provider_reported",
+      "latencyMs": 1910,
+      "techniques": [
+        {
+          "name": "tool_output_compression",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "context_dedup",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "experimentally_estimated"
+        },
+        {
+          "name": "prompt_cache_hints",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "exact_cache",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        }
+      ],
+      "answer": "Cartão de crédito, Pix e boleto por transferência bancária.",
+      "assertion": "cita Pix",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "multiturn_duplicated_context",
+      "request": "turn3_dup",
+      "mode": "balanced",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "miss",
+      "promptTokens": 447,
+      "completionTokens": 3,
+      "usageSource": "provider_reported",
+      "latencyMs": 1094,
+      "techniques": [
+        {
+          "name": "tool_output_compression",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "context_dedup",
+          "applied": true,
+          "tokensSaved": 258,
+          "source": "experimentally_estimated"
+        },
+        {
+          "name": "prompt_cache_hints",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "exact_cache",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        }
+      ],
+      "answer": "30",
+      "assertion": "responde 30",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "multiturn_duplicated_context",
+      "request": "turn4_dup2",
+      "mode": "balanced",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "miss",
+      "promptTokens": 537,
+      "completionTokens": 2,
+      "usageSource": "provider_reported",
+      "latencyMs": 756,
+      "techniques": [
+        {
+          "name": "tool_output_compression",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "context_dedup",
+          "applied": true,
+          "tokensSaved": 516,
+          "source": "experimentally_estimated"
+        },
+        {
+          "name": "prompt_cache_hints",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "exact_cache",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        }
+      ],
+      "answer": "5",
+      "assertion": "responde 5",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "control_unique_short",
+      "request": "unique1",
+      "mode": "balanced",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "miss",
+      "promptTokens": 25,
+      "completionTokens": 2,
+      "usageSource": "provider_reported",
+      "latencyMs": 816,
+      "techniques": [
+        {
+          "name": "tool_output_compression",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "context_dedup",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "experimentally_estimated"
+        },
+        {
+          "name": "prompt_cache_hints",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "exact_cache",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        }
+      ],
+      "answer": "Cat",
+      "assertion": "responde cat",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "control_unique_short",
+      "request": "unique2",
+      "mode": "balanced",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "miss",
+      "promptTokens": 28,
+      "completionTokens": 3,
+      "usageSource": "provider_reported",
+      "latencyMs": 572,
+      "techniques": [
+        {
+          "name": "tool_output_compression",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "context_dedup",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "experimentally_estimated"
+        },
+        {
+          "name": "prompt_cache_hints",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "exact_cache",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        }
+      ],
+      "answer": "42",
+      "assertion": "responde 42",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "control_unique_short",
+      "request": "unique3",
+      "mode": "balanced",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "miss",
+      "promptTokens": 21,
+      "completionTokens": 3,
+      "usageSource": "provider_reported",
+      "latencyMs": 1068,
+      "techniques": [
+        {
+          "name": "tool_output_compression",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "context_dedup",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "experimentally_estimated"
+        },
+        {
+          "name": "prompt_cache_hints",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "exact_cache",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        }
+      ],
+      "answer": "Tokyo",
+      "assertion": "responde Tokyo",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "control_unique_short",
+      "request": "unique4",
+      "mode": "balanced",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "miss",
+      "promptTokens": 25,
+      "completionTokens": 2,
+      "usageSource": "provider_reported",
+      "latencyMs": 960,
+      "techniques": [
+        {
+          "name": "tool_output_compression",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "context_dedup",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "experimentally_estimated"
+        },
+        {
+          "name": "prompt_cache_hints",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "exact_cache",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        }
+      ],
+      "answer": "No",
+      "assertion": "responde no",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "control_unique_short",
+      "request": "unique5",
+      "mode": "balanced",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "miss",
+      "promptTokens": 19,
+      "completionTokens": 48,
+      "usageSource": "provider_reported",
+      "latencyMs": 5426,
+      "techniques": [
+        {
+          "name": "tool_output_compression",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "context_dedup",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "experimentally_estimated"
+        },
+        {
+          "name": "prompt_cache_hints",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "exact_cache",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        }
+      ],
+      "answer": "The chemical symbol for sodium is **Na**.\n\nThis symbol comes from its Latin name, *Natrium*. In the periodic table, it has the atomic number 11 and belongs to Group 1 (alkali metals).",
+      "assertion": "responde Na",
+      "passed": true,
+      "truncationSuspected": false
+    },
+    {
+      "workload": "control_unique_short",
+      "request": "unique6",
+      "mode": "balanced",
+      "httpStatus": 200,
+      "eventStatus": "ok",
+      "cache": "miss",
+      "promptTokens": 24,
+      "completionTokens": 2,
+      "usageSource": "provider_reported",
+      "latencyMs": 1152,
+      "techniques": [
+        {
+          "name": "tool_output_compression",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "context_dedup",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "experimentally_estimated"
+        },
+        {
+          "name": "prompt_cache_hints",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        },
+        {
+          "name": "exact_cache",
+          "applied": false,
+          "tokensSaved": 0,
+          "source": "unavailable"
+        }
+      ],
+      "answer": "cba",
+      "assertion": "responde cba",
+      "passed": true,
+      "truncationSuspected": false
+    }
+  ]
+}
