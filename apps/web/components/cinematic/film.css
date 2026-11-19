@@ -167,3 +167,17 @@ html.film-has-cursor, html.film-has-cursor * { cursor: none !important; }
   opacity: var(--ga, 0); transition: opacity .4s;
 }
 @media (prefers-reduced-motion: reduce) { .film-tilt { transform: none !important; } }
+
+/* ───────── Short screens (phone in landscape, small laptop windows) ───────── */
+@media (max-height: 560px) {
+  .film-display { font-size: clamp(1.5rem, 9.5svh, 3rem) !important; }
+  .film-title { font-size: clamp(1.3rem, 7.5svh, 2.5rem) !important; }
+  .film-lead { font-size: 13px !important; line-height: 1.45 !important; margin-top: 10px !important; }
+  .film-stage > div { padding-top: 68px !important; padding-bottom: 12px !important; }
+  .film-optional { display: none !important; }
+  .film-orbit-detail { min-height: 0 !important; margin-top: 10px !important; }
+}
+/* short AND wide (phone in landscape): give the copy column a bit more room */
+@media (max-height: 560px) and (min-aspect-ratio: 13/10) {
+  .film-col { width: 52% !important; }
+}

@@ -14,7 +14,9 @@ export const film = {
   /** per-scene local progress 0..1 (from sTarget) */
   local: [] as number[],
   /** pointer in -1..1 (x right, y up), raw and damped */
-  pointer: { x: 0, y: 0, sx: 0, sy: 0, active: false },
+  pointer: { x: 0, y: 0, sx: 0, sy: 0, active: false, touchAt: -1e9 },
+  /** device tilt (gyroscope) in -1..1, raw and damped — phones get parallax from tilting */
+  tilt: { x: 0, y: 0, sx: 0, sy: 0, active: false },
   /** monotonically increasing pulse id; orb reacts when it changes */
   pulse: 0,
   pulseAt: -10,

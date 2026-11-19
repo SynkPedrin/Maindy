@@ -30,8 +30,8 @@ export const KEYS: Key[] = [
   // Composition rule: the 3D subject and the copy never share screen space.
   // Landscape: subject on the right half, copy on the left (except centred beats). Portrait: subject top, copy bottom.
   // 01 hero — orb on the right, headline column on the left
-  { s: 0.0, cam: [-1.45, 0.05, 7.6], look: [-1.45, 0, 0], orb: [0, 0, 0], scale: 1, light: 1, gold: 1, m: { cam: [0, -1.25, 7.0], look: [0, -1.25, 0] } },
-  { s: 0.45, cam: [-0.7, 0.1, 4.8], look: [-0.45, 0, 0], orb: [0, 0, 0], scale: 1, light: 1, gold: 0.9, m: { cam: [0, -0.7, 4.8], look: [0, -0.5, 0] } },
+  { s: 0.0, cam: [-1.45, 0.05, 7.6], look: [-1.45, 0, 0], orb: [0, 0, 0], scale: 1, light: 1, gold: 1, m: { cam: [0, -2.55, 7.8], look: [0, -2.55, 0], scale: 0.85 } },
+  { s: 0.45, cam: [-0.7, 0.1, 4.8], look: [-0.45, 0, 0], orb: [0, 0, 0], scale: 1, light: 1, gold: 0.9, m: { cam: [0, -0.7, 4.8], look: [0, -0.5, 0], scale: 0.85 } },
   { s: 0.9, cam: [0.02, 0.0, 1.55], look: [0, 0, 0], orb: [0, 0, 0], scale: 1, light: 1, gold: 0.7, m: { cam: [0, 0, 1.6], look: [0, 0, 0] } },
   // 02 overload — through the membrane, down a corridor of waste (cards live on the right, copy on the left)
   { s: 1.0, cam: [0, 0, -1.5], look: [0.4, 0, -12], orb: c2(0, 0, 0), scale: 0, light: 0.8, gold: 0.4 },
@@ -48,11 +48,11 @@ export const KEYS: Key[] = [
   { s: 4.2, cam: c2(1.9, 0.1, 7.0), look: c2(1.9, 0, 0), orb: c2(0, 0, 0), scale: 0.86, light: 0.9, gold: 0.9, m: { cam: c2(0, -4.6, 8.2), look: c2(0, -4.6, 0), scale: 0.42 } },
   { s: 4.85, cam: c2(2.0, 0.05, 6.8), look: c2(2.0, 0, 0), orb: c2(0, 0, 0), scale: 0.86, light: 0.9, gold: 0.9, m: { cam: c2(0, -4.7, 8.2), look: c2(0, -4.7, 0), scale: 0.42 } },
   // 06 ORBIT — ring of five stages on the right, from above
-  { s: 5.25, cam: c2(-2.6, 3.2, 9.6), look: c2(-2.6, 0.1, 0), orb: c2(0, 0, 0), scale: 0.62, light: 1, gold: 1, m: { cam: c2(0, 3.0, 9.6), look: c2(0, -1.5, 0) } },
-  { s: 5.8, cam: c2(-2.3, 3.5, 9.3), look: c2(-2.6, 0.1, 0), orb: c2(0, 0, 0), scale: 0.62, light: 1, gold: 1, m: { cam: c2(0, 3.3, 9.4), look: c2(0, -1.5, 0) } },
+  { s: 5.25, cam: c2(-2.6, 3.2, 9.6), look: c2(-2.6, 0.1, 0), orb: c2(0, 0, 0), scale: 0.62, light: 1, gold: 1, m: { cam: c2(0, 3.0, 9.6), look: c2(0, -4.3, 0) } },
+  { s: 5.8, cam: c2(-2.3, 3.5, 9.3), look: c2(-2.6, 0.1, 0), orb: c2(0, 0, 0), scale: 0.62, light: 1, gold: 1, m: { cam: c2(0, 3.3, 9.4), look: c2(0, -4.3, 0) } },
   // 07 quality — close and quiet, subject right
-  { s: 6.25, cam: c2(-1.6, 0.35, 7.4), look: c2(-1.6, 0.05, 0), orb: c2(0, 0, 0), scale: 1, light: 0.9, gold: 0.7, m: { cam: c2(0, -1.4, 7.4), look: c2(0, -1.45, 0), scale: 0.7 } },
-  { s: 6.8, cam: c2(-1.8, 0.25, 7.0), look: c2(-1.7, 0.0, 0), orb: c2(0, 0, 0), scale: 1, light: 0.9, gold: 0.7, m: { cam: c2(0, -1.45, 7.2), look: c2(0, -1.5, 0), scale: 0.7 } },
+  { s: 6.25, cam: c2(-1.6, 0.35, 7.4), look: c2(-1.6, 0.05, 0), orb: c2(0, 0, 0), scale: 1, light: 0.9, gold: 0.7, m: { cam: c2(0, -2.4, 7.6), look: c2(0, -2.45, 0), scale: 0.62 } },
+  { s: 6.8, cam: c2(-1.8, 0.25, 7.0), look: c2(-1.7, 0.0, 0), orb: c2(0, 0, 0), scale: 1, light: 0.9, gold: 0.7, m: { cam: c2(0, -2.45, 7.4), look: c2(0, -2.5, 0), scale: 0.62 } },
   // 08 assistant — the 3D orb bows out; the floating widget is the orb now
   { s: 7.3, cam: c2(0, 0.4, 13), look: c2(0, 0.2, 0), orb: c2(0, 0, 0), scale: 0.0, light: 0.55, gold: 0.6 },
   { s: 7.8, cam: c2(0, 0.6, 15), look: c2(0, 0.3, 0), orb: c2(0, 0, 0), scale: 0.0, light: 0.5, gold: 0.6 },
@@ -60,8 +60,8 @@ export const KEYS: Key[] = [
   { s: 8.3, cam: c2(0, 6.5, 17), look: c2(0, 1.2, 0), orb: c2(0, 0, 0), scale: 0.0, light: 0.75, gold: 0.5 },
   { s: 8.85, cam: c2(1.5, 7.4, 15.5), look: c2(0, 1.2, 0), orb: c2(0, 0, 0), scale: 0.0, light: 0.8, gold: 0.5 },
   // 10 product — orb as a backlight behind the device
-  { s: 9.3, cam: c2(0, 0.2, 9.2), look: c2(0, 0.25, 0), orb: c2(0, -0.6, -3), scale: 1.7, light: 0.8, gold: 0.8 },
-  { s: 9.85, cam: c2(0, 0.1, 8.8), look: c2(0, 0.2, 0), orb: c2(0, -0.6, -3), scale: 1.7, light: 0.8, gold: 0.8 },
+  { s: 9.3, cam: c2(0, 0.2, 9.2), look: c2(0, 0.25, 0), orb: c2(0, -0.6, -3), scale: 1.7, light: 0.8, gold: 0.8, m: { scale: 0 } },
+  { s: 9.85, cam: c2(0, 0.1, 8.8), look: c2(0, 0.2, 0), orb: c2(0, -0.6, -3), scale: 1.7, light: 0.8, gold: 0.8, m: { scale: 0 } },
   // 11 final — centred, matched to the official film plate (scale overridden at runtime)
   { s: 10.08, cam: c2(0, 0, 7), look: c2(0, 0, 0), orb: c2(0, 0, 0), scale: 1, light: 1, gold: 1 },
   { s: 11.0, cam: c2(0, 0, 7), look: c2(0, 0, 0), orb: c2(0, 0, 0), scale: 1, light: 1, gold: 1 },

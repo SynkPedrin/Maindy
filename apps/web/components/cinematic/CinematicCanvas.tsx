@@ -79,7 +79,7 @@ export function CinematicCanvas() {
   const dprRaw = typeof window === "undefined" ? 1 : window.devicePixelRatio || 1;
   // native resolution up to 2× (4K/Retina); the DynamicResolution governor trades pixels for frame rate
   const maxDpr = quality === "high" ? Math.min(dprRaw, 2) : Math.min(dprRaw, mobile ? 2 : 1.5);
-  const particles = quality === "high" ? 4200 : mobile ? 1400 : 2200;
+  const particles = quality === "high" ? (mobile ? 2200 : 4200) : mobile ? 1400 : 2200;
 
   if (mode === "flow") return null;
 

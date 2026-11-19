@@ -124,9 +124,22 @@ export function CinematicScrollController({ children }: { children: React.ReactN
     const onPointer = (e: PointerEvent) => {
       film.pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
       film.pointer.y = -((e.clientY / window.innerHeight) * 2 - 1);
-      film.pointer.active = true;
+      if (e.pointerType === "mouse") film.pointer.active = true;
+      else film.pointer.touchAt = performance.now();
     };
     window.addEventListener("pointermove", onPointer, { passive: true });
+    window.addEventListener("pointerdown", onPointer, { passive: true });
+    // gyroscope parallax (Android fires without permission; iOS after the "Movimento" button grants it)
+    const onOrient = (e: DeviceOrientationEvent) => {
+      if (e.gamma == null || e.beta == null) return;
+      const portrait = window.innerHeight >= window.innerWidth;
+      const gx = portrait ? e.gamma : e.beta;
+      const gy = portrait ? e.beta - 45 : (e.gamma ?? 0);
+      film.tilt.x = Math.max(-1, Math.min(1, gx / 28));
+      film.tilt.y = Math.max(-1, Math.min(1, -gy / 28));
+      film.tilt.active = true;
+    };
+    window.addEventListener("deviceorientation", onOrient, { passive: true });
     window.addEventListener("scroll", compute, { passive: true });
 
     let raf = 0;
@@ -156,6 +169,8 @@ export function CinematicScrollController({ children }: { children: React.ReactN
       const pk = 1 - Math.exp(-dt * 4);
       film.pointer.sx += (film.pointer.x - film.pointer.sx) * pk;
       film.pointer.sy += (film.pointer.y - film.pointer.sy) * pk;
+      film.tilt.sx += (film.tilt.x - film.tilt.sx) * pk;
+      film.tilt.sy += (film.tilt.y - film.tilt.sy) * pk;
       if (film.intro < 1) {
         if (introStart < 0) introStart = now;
         const t = (now - introStart) / 2200;
@@ -186,6 +201,8 @@ export function CinematicScrollController({ children }: { children: React.ReactN
       st.kill();
       ro.disconnect();
       window.removeEventListener("pointermove", onPointer);
+      window.removeEventListener("pointerdown", onPointer);
+      window.removeEventListener("deviceorientation", onOrient);
       window.removeEventListener("scroll", compute);
       window.removeEventListener("maindy:skip-intro", onSkip);
       window.removeEventListener("maindy:intro-restart", onRestart);

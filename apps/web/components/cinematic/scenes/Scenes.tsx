@@ -23,14 +23,14 @@ import { goToScene } from "../ui/SceneProgress";
  * Composition grid. Landscape: copy lives in the left column (≤ 44%), the 3D subject owns the right.
  * Portrait: subject in the upper half, copy anchored to the bottom over a scrim. Nothing overlaps.
  */
-const frame = "mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-16 xl:px-24";
-const leftCol = "w-full lg:w-[44%] xl:w-[40%]";
+const frame = "mx-auto w-full max-w-[1440px] px-5 sm:px-8 wide:px-16 xl:px-24";
+const leftCol = "film-col w-full wide:w-[44%] xl:w-[40%]";
 
 /* 01 ─────────────────────────────── HERO */
 export function HeroScene() {
   return (
     <Scene id="hero" labelledBy="hero-title" stageClassName="film-scrim-left">
-      <div className={cn(frame, "flex h-full flex-col justify-end pb-8 pt-24 sm:pb-12 lg:justify-center lg:pb-0")}>
+      <div className={cn(frame, "flex h-full flex-col justify-end pb-8 pt-24 sm:pb-12 wide:justify-center wide:pb-0")}>
         <div className={leftCol}>
           <div data-r="fade" data-a={-1} data-b={0.3}>
             <p className="m-label mk-fade flex items-center gap-3" style={{ ["--d" as string]: "300ms" }}>
@@ -77,17 +77,17 @@ export function HeroScene() {
             ))}
           </h1>
           <div data-r="fade" data-a={-1} data-b={0.18}>
-            <p className="mk-fade film-lead mt-7 max-w-[28rem] text-[16px] leading-relaxed text-muted sm:text-[17.5px]" style={{ ["--d" as string]: "1000ms" }}>
+            <p className="film-optional mk-fade film-lead mt-7 max-w-[28rem] text-[16px] leading-relaxed text-muted sm:text-[17.5px]" style={{ ["--d" as string]: "1000ms" }}>
               Uma camada inteligente que reduz o desperdício de IA em APIs, agentes e ferramentas de desenvolvimento, e prova cada centavo economizado.
             </p>
           </div>
           <div data-r="fade" data-a={-1} data-b={0.18}>
-            <div className="mk-fade mt-8 flex flex-wrap items-center gap-3" style={{ ["--d" as string]: "1150ms" }}>
+            <div className="mk-fade mt-8 flex flex-wrap items-center gap-3 max-[380px]:gap-2" style={{ ["--d" as string]: "1150ms" }}>
               <Link
                 href="/cadastro"
                 data-cursor="Começar"
                 onClick={() => track("hero_cta", { to: "cadastro" })}
-                className="group inline-flex h-12 items-center gap-2 rounded-full bg-fg px-6 text-[15px] font-medium text-bg shadow-[0_12px_40px_-12px_rgba(164,36,255,.9)] transition-shadow hover:shadow-[0_16px_60px_-10px_rgba(199,36,255,1)]"
+                className="group inline-flex h-12 items-center gap-2 rounded-full bg-fg px-6 text-[15px] font-medium text-bg shadow-[0_12px_40px_-12px_rgba(164,36,255,.9)] transition-shadow hover:shadow-[0_16px_60px_-10px_rgba(199,36,255,1)] max-[380px]:h-11 max-[380px]:px-4 max-[380px]:text-[14px]"
               >
                 Começar agora
                 <ArrowRight aria-hidden className="size-4 transition-transform group-hover:translate-x-0.5" />
@@ -100,14 +100,14 @@ export function HeroScene() {
                   track("hero_cta", { to: "baixar" });
                   goToScene(SCENE_INDEX.final);
                 }}
-                className="inline-flex h-12 items-center rounded-full border border-white/20 bg-[rgba(8,6,30,.55)] px-6 text-[15px] text-fg transition-colors hover:bg-white/[0.08]"
+                className="inline-flex h-12 items-center rounded-full border border-white/20 bg-[rgba(8,6,30,.55)] px-6 text-[15px] text-fg transition-colors hover:bg-white/[0.08] max-[380px]:h-11 max-[380px]:px-4 max-[380px]:text-[14px]"
               >
                 Baixar o app
               </a>
             </div>
           </div>
         </div>
-        <div className="pointer-events-none absolute inset-x-0 bottom-6 hidden justify-center lg:flex" data-film-only data-r="fade" data-a={-1} data-b={0.08}>
+        <div className="pointer-events-none absolute inset-x-0 bottom-6 hidden justify-center wide:flex" data-film-only data-r="fade" data-a={-1} data-b={0.08}>
           <div className="mk-fade flex flex-col items-center gap-3" style={{ ["--d" as string]: "1500ms" }}>
             <span className="m-label">Role para explorar</span>
             <span aria-hidden className="relative h-10 w-px overflow-hidden bg-white/15">
@@ -117,7 +117,7 @@ export function HeroScene() {
         </div>
         <button
           type="button"
-          className="film-intro-skip m-label absolute right-5 top-20 rounded-full border border-white/15 px-3 py-1.5 text-muted hover:text-fg sm:right-8 lg:right-16"
+          className="film-intro-skip m-label absolute right-5 top-20 rounded-full border border-white/15 px-3 py-1.5 text-muted hover:text-fg sm:right-8 wide:right-16"
           onClick={() => window.dispatchEvent(new Event("maindy:skip-intro"))}
         >
           Pular introdução
@@ -131,7 +131,7 @@ export function HeroScene() {
 export function OverloadScene() {
   return (
     <Scene id="overload" labelledBy="overload-title" stageClassName="film-scrim-left">
-      <div className={cn(frame, "flex h-full flex-col justify-end pb-10 pt-24 lg:justify-center lg:pb-0")}>
+      <div className={cn(frame, "flex h-full flex-col justify-end pb-10 pt-24 wide:justify-center wide:pb-0")}>
         <div className={cn(leftCol, "relative")}>
           <Slate n="01" a={0.05} b={0.92} className="mb-6">
             O custo invisível
@@ -140,7 +140,7 @@ export function OverloadScene() {
             <Words id="overload-title" text={"Cada chamada\ncarrega mais do\nque precisa."} className="film-title text-[clamp(2.3rem,4.6vw,4.9rem)] text-fg" a={0.1} b={0.48} d={0.14} />
             <Words as="p" text={"E a fatura\ncobra por tudo."} accent={["por", "tudo."]} className="film-title text-[clamp(2.3rem,4.6vw,4.9rem)] text-fg" a={0.54} b={0.92} d={0.14} />
           </div>
-          <p className="film-lead mt-7 max-w-[26rem] text-[15.5px] leading-relaxed text-muted" data-r="fade" data-a={0.2} data-b={0.88}>
+          <p className="film-optional film-lead mt-7 max-w-[26rem] text-[15.5px] leading-relaxed text-muted" data-r="fade" data-a={0.2} data-b={0.88}>
             Contexto reenviado, logs inteiros, agentes em loop, a mesma pergunta duas vezes. Ninguém vê, mas cada token entra na conta.
           </p>
           <p className="m-label mt-5 text-[10px]" data-r="fade" data-a={0.2} data-b={0.88}>
@@ -183,7 +183,7 @@ export function ShiftScene() {
 export function MeetScene() {
   return (
     <Scene id="meet" labelledBy="meet-title" stageClassName="film-scrim-left">
-      <div className={cn(frame, "flex h-full flex-col justify-end pb-10 pt-24 lg:justify-center lg:pb-0")}>
+      <div className={cn(frame, "flex h-full flex-col justify-end pb-10 pt-24 wide:justify-center wide:pb-0")}>
         <div className={cn(leftCol, "relative")}>
           <Slate n="02" a={0.05} b={0.92} className="mb-6">
             A camada maindy.
@@ -195,7 +195,7 @@ export function MeetScene() {
           <p className="film-lead mt-7 max-w-[28rem] text-[15.5px] leading-relaxed text-muted" data-r="fade" data-a={0.56} data-b={0.93}>
             Um gateway local entre o seu código e o provedor. Suas chaves, seus provedores. A maindy. mede, reduz e prova, sem ler o que não precisa.
           </p>
-          <p className="m-label mt-6 hidden items-center gap-2 text-[10px] lg:flex" data-r="fade" data-a={0.12} data-b={0.93}>
+          <p className="m-label mt-6 hidden items-center gap-2 text-[10px] wide:flex" data-r="fade" data-a={0.12} data-b={0.93}>
             <span aria-hidden className="size-1.5 rounded-full bg-gold" /> Arraste para orbitar · clique no orbe
           </p>
         </div>
@@ -208,14 +208,14 @@ export function MeetScene() {
 export function DemoScene({ data }: { data: OrbitDemoData }) {
   return (
     <Scene id="demo" labelledBy="demo-title">
-      <div className={cn(frame, "grid h-full items-center gap-6 pb-6 pt-24 max-lg:content-end lg:grid-cols-12")}>
-        <div className="max-lg:hidden lg:col-span-5" />
-        <div className="lg:col-span-7 lg:pl-4 xl:col-span-6 xl:col-start-7">
+      <div className={cn(frame, "grid h-full items-center gap-6 pb-6 pt-24 narrow:content-end wide:grid-cols-12")}>
+        <div className="narrow:hidden wide:col-span-5" />
+        <div className="wide:col-span-7 wide:pl-4 xl:col-span-6 xl:col-start-7">
           <Slate n="03" a={0.03} b={0.93} className="mb-4">
             Na prática
           </Slate>
           <Words id="demo-title" text={"Você chama.\nA maindy. otimiza."} accent={["otimiza."]} className="film-title text-[clamp(2rem,3.6vw,3.8rem)] text-fg" a={0.04} b={0.93} d={0.1} />
-          <div className="mt-5 max-h-[56svh] overflow-y-auto overscroll-contain rounded-[26px] [scrollbar-width:none] lg:max-h-[calc(100svh-16rem)]" data-r="rise" data-a={0.1} data-b={0.93} data-d={0.12}>
+          <div className="mt-5 max-h-[56svh] overflow-y-auto overscroll-contain rounded-[26px] [scrollbar-width:none] wide:max-h-[calc(100svh-16rem)]" data-r="rise" data-a={0.1} data-b={0.93} data-d={0.12}>
             <OrbitDemo data={data} />
           </div>
         </div>
@@ -246,7 +246,7 @@ export function OrbitScene() {
   }
   return (
     <Scene id="orbit" labelledBy="orbit-title" stageClassName="film-scrim-left">
-      <div className={cn(frame, "flex h-full flex-col justify-end pb-8 pt-24 lg:justify-center lg:pb-0")}>
+      <div className={cn(frame, "flex h-full flex-col justify-end pb-8 pt-24 wide:justify-center wide:pb-0")}>
         <div className={leftCol}>
           <Slate n="04" a={0.02} b={0.95} className="mb-5">
             Powered by ORBIT Engine™
@@ -272,7 +272,7 @@ export function OrbitScene() {
                 </button>
               ))}
             </div>
-            <div className="mt-6 min-h-[11.5rem]" aria-live="polite">
+            <div className="film-orbit-detail mt-6 min-h-[11.5rem]" aria-live="polite">
               <div key={st.key} className="film-moment">
                 <div className="flex items-baseline gap-4">
                   <span className="film-serif mk-ink-violet text-[clamp(3.6rem,6vw,5.6rem)] leading-[0.8]">{st.key}</span>
@@ -281,8 +281,8 @@ export function OrbitScene() {
                     <p className="mt-1 text-[21px] font-medium tracking-[-0.02em] text-fg">{st.name}</p>
                   </div>
                 </div>
-                <p className="film-lead mt-3 max-w-[30rem] text-[15px] leading-relaxed text-muted">{st.summary}</p>
-                <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5">
+                <p className="film-optional film-lead mt-3 max-w-[30rem] text-[15px] leading-relaxed text-muted">{st.summary}</p>
+                <ul className="film-optional mt-3 flex flex-wrap gap-x-5 gap-y-1.5 narrow:hidden">
                   {st.techniques.map((t) => (
                     <li key={t} className="flex items-center gap-2 text-[13px] text-fg/85">
                       <span aria-hidden className="h-px w-3 bg-purple" />
@@ -292,7 +292,7 @@ export function OrbitScene() {
                 </ul>
               </div>
             </div>
-            <p className="m-label mt-2 text-[9.5px]">Visualização ilustrativa do método</p>
+            <p className="film-optional m-label mt-2 text-[9.5px] narrow:hidden">Visualização ilustrativa do método</p>
           </div>
         </div>
       </div>
@@ -319,7 +319,7 @@ export function QualityScene() {
   ];
   return (
     <Scene id="quality" labelledBy="quality-title" stageClassName="film-scrim-left">
-      <div className={cn(frame, "flex h-full flex-col justify-end pb-10 pt-24 lg:justify-center lg:pb-0")}>
+      <div className={cn(frame, "flex h-full flex-col justify-end pb-10 pt-24 wide:justify-center wide:pb-0")}>
         <div className={leftCol}>
           <Slate n="05" a={0.04} b={0.93} className="mb-5">
             Quality Guard
@@ -340,7 +340,7 @@ export function QualityScene() {
                     <li key={r.name} className="flex items-center justify-between gap-3 rounded-[14px] border border-white/[0.06] bg-white/[0.025] px-3.5 py-3">
                       <div className="min-w-0">
                         <p className="truncate text-[13.5px] text-fg">{r.name}</p>
-                        <p className={cn("text-[12px] transition-opacity duration-500", shown ? "text-muted opacity-100" : "opacity-0")}>{r.detail}</p>
+                        <p className={cn("film-optional text-[12px] transition-opacity duration-500", shown ? "text-muted opacity-100" : "opacity-0")}>{r.detail}</p>
                       </div>
                       <span
                         className={cn(
@@ -356,7 +356,7 @@ export function QualityScene() {
                   );
                 })}
               </ul>
-              <p className={cn("mt-4 text-[13px] leading-relaxed text-muted transition-opacity duration-500", step >= 3 ? "opacity-100" : "opacity-40")}>
+              <p className={cn("film-optional mt-4 text-[13px] leading-relaxed text-muted transition-opacity duration-500", step >= 3 ? "opacity-100" : "opacity-40")}>
                 Fail-open: se o ORBIT falhar ou passar do orçamento de latência, a requisição original segue intacta.
               </p>
             </div>
@@ -371,8 +371,8 @@ export function QualityScene() {
 export function AssistantScene() {
   return (
     <Scene id="assistant" labelledBy="assistant-title">
-      <div className={cn(frame, "grid h-full content-center gap-8 pb-8 pt-24 lg:grid-cols-12 lg:items-center")}>
-        <div className="lg:col-span-5">
+      <div className={cn(frame, "grid h-full content-center gap-8 pb-8 pt-24 wide:grid-cols-12 wide:items-center")}>
+        <div className="wide:col-span-5">
           <Slate n="06" a={0.04} b={0.93} className="mb-5">
             Sempre por perto
           </Slate>
@@ -385,7 +385,7 @@ export function AssistantScene() {
           </p>
         </div>
         {/* a calm "desktop" so the widget reads as what it is: a floating launcher on your screen */}
-        <div className="relative h-[46svh] lg:col-span-7 lg:h-[62svh]" data-r="scale" data-a={0.12} data-b={0.93} data-d={0.12}>
+        <div className="relative h-[46svh] wide:col-span-7 wide:h-[62svh]" data-r="scale" data-a={0.12} data-b={0.93} data-d={0.12}>
           <div aria-hidden className="absolute inset-0 overflow-hidden rounded-[24px] border border-white/[0.09] bg-[#0a0824] shadow-[0_60px_140px_-50px_rgba(143,32,255,.55)]">
             <div className="absolute inset-0 bg-[radial-gradient(120%_90%_at_85%_0%,rgba(143,32,255,.22),transparent_55%),radial-gradient(90%_70%_at_0%_100%,rgba(255,178,31,.08),transparent_60%)]" />
             <div className="relative flex h-7 items-center gap-3 border-b border-white/[0.06] bg-black/40 px-3">
@@ -430,7 +430,7 @@ export function ClarityScene() {
         />
         <div className="w-full" data-r="rise" data-a={0.42} data-b={0.93} data-d={0.12}>
           <p className="film-title mx-auto max-w-[22ch] text-[clamp(1.6rem,2.6vw,2.6rem)] text-fg">Cada número diz de onde veio.</p>
-          <ul className="mx-auto mt-7 grid max-w-[64rem] gap-x-8 gap-y-4 text-left sm:grid-cols-2 lg:grid-cols-4">
+          <ul className="mx-auto mt-7 grid max-w-[64rem] gap-x-8 gap-y-4 text-left sm:grid-cols-2 wide:grid-cols-4">
             {provenance.map((p) => (
               <li key={p.key} className="border-t border-white/12 pt-3">
                 <p className="flex items-center gap-2 text-[13.5px] text-fg">
@@ -488,11 +488,11 @@ export function FinalScene() {
           id="final-title"
           text={"Sua IA trabalha mais.\nVocê gasta menos."}
           accent={["menos."]}
-          className="film-display text-[clamp(2.2rem,4.6vw,4.8rem)] text-fg"
+          className="film-optional film-display text-[clamp(2.2rem,4.6vw,4.8rem)] text-fg"
           a={0.56}
           d={0.1}
         />
-        <p className="film-lead mx-auto mt-4 max-w-[32rem] text-[15.5px] leading-relaxed text-muted" data-r="fade" data-a={0.62} data-d={0.08}>
+        <p className="film-optional film-lead mx-auto mt-4 max-w-[32rem] text-[15.5px] leading-relaxed text-muted" data-r="fade" data-a={0.62} data-d={0.08}>
           Comece medindo. Otimize só o que provar resultado.
         </p>
         <div className="mt-7 w-full" data-r="rise" data-a={0.66} data-d={0.1}>

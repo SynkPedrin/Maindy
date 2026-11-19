@@ -393,9 +393,40 @@ function Dock() {
     emitFilmChange();
   }
 
+  const [tiltNeedsPermission, setTiltNeedsPermission] = useState(false);
+  const [tiltOn, setTiltOn] = useState(false);
+  useEffect(() => {
+    const D = (window as unknown as { DeviceOrientationEvent?: { requestPermission?: () => Promise<string> } }).DeviceOrientationEvent;
+    setTiltNeedsPermission(!!D?.requestPermission && !fine());
+  }, []);
+  async function enableTilt() {
+    const D = (window as unknown as { DeviceOrientationEvent?: { requestPermission?: () => Promise<string> } }).DeviceOrientationEvent;
+    try {
+      const r = await D?.requestPermission?.();
+      setTiltOn(r === "granted");
+    } catch {}
+  }
+
   if (mode !== "film") return null;
   const labels: Record<"auto" | Quality, string> = { auto: "Automática", high: "Ultra · 4K", medium: "Equilibrada", low: "Leve" };
   return (
+    <>
+    {/* phones: compact controls under the header, away from the copy (which sits at the bottom) */}
+    <div className="fixed right-[60px] top-[14px] z-[60] flex items-center gap-2 md:hidden">
+      <button type="button" onClick={toggleSound} aria-pressed={sound} className="film-dock-btn !h-9 !px-2.5" aria-label={sound ? "Desligar som ambiente" : "Ligar som ambiente"}>
+        <span className={cn("film-eq", sound && "is-on")} aria-hidden>
+          <i />
+          <i />
+          <i />
+          <i />
+        </span>
+      </button>
+      {tiltNeedsPermission && !tiltOn ? (
+        <button type="button" onClick={enableTilt} className="film-dock-btn !h-9 !px-3 text-[11.5px]" aria-label="Ativar movimento pelo giroscópio">
+          Movimento
+        </button>
+      ) : null}
+    </div>
     <div className="fixed bottom-5 left-5 z-[60] hidden items-end gap-2 md:flex">
       <button
         type="button"
@@ -441,6 +472,7 @@ function Dock() {
         ) : null}
       </div>
     </div>
+    </>
   );
 }
 

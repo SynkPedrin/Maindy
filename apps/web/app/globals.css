@@ -2,6 +2,14 @@
 @import "@maindy/design-system/tokens.css";
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+/* landing film: "wide" composition (copy left, 3D right) — same rule as the WebGL director (isWide) */
+@custom-variant wide {
+  @media (min-width: 1024px) { @slot; }
+  @media (min-aspect-ratio: 13/10) { @slot; }
+}
+@custom-variant narrow {
+  @media (max-width: 1023.98px) and (max-aspect-ratio: 129/100) { @slot; }
+}
 
 @theme inline {
   --color-bg: var(--m-bg);

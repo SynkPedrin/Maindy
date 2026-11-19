@@ -96,7 +96,7 @@ export function ProductDevice() {
         </div>
         <DemoBadge label="Interface do app · dados simulados" className="hidden sm:inline-flex" />
       </div>
-      <p className="mt-3 min-h-[2.6em] max-w-[34rem] px-4 text-center text-[13.5px] leading-snug text-muted" aria-live="polite">
+      <p className="film-optional mt-3 min-h-[2.6em] max-w-[34rem] px-4 text-center text-[13.5px] leading-snug text-muted" aria-live="polite">
         {M.caption}
       </p>
       <div ref={fit} className="relative mt-2 w-full flex-1">

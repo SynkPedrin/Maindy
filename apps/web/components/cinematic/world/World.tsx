@@ -51,7 +51,8 @@ function Director() {
   useFrame(() => {
     const cam = camera as PerspectiveCamera;
     const aspect = size.width / size.height;
-    const portrait = aspect < 0.9;
+    // same rule as the HTML `wide:` variant: copy left / subject right only when the screen is wide
+    const portrait = !(size.width >= 1024 || aspect >= 1.3);
     samplePose(film.s, portrait, pose);
     // narrow screens: pull the camera back along its view line so framing survives the aspect
     const m = aspect < 1.25 ? Math.pow(1.25 / aspect, 0.75) : 1;
@@ -66,9 +67,13 @@ function Director() {
     }
     cam.position.copy(pose.look).add(tmp);
     // subtle handheld parallax from the pointer (desktop only), damped
-    if (!film.viewport.mobile && !film.reducedMotion && film.s < FINAL - 0.1) {
-      cam.position.x += film.pointer.sx * 0.12;
-      cam.position.y += film.pointer.sy * 0.08;
+    if (!film.reducedMotion && film.s < FINAL - 0.1) {
+      // desktop: pointer parallax · phones: tilt the device (gyroscope)
+      const px = film.viewport.mobile ? (film.tilt.active ? film.tilt.sx : 0) : film.pointer.sx;
+      const py = film.viewport.mobile ? (film.tilt.active ? film.tilt.sy : 0) : film.pointer.sy;
+      const amp = film.viewport.mobile ? 0.32 : 0.12;
+      cam.position.x += px * amp;
+      cam.position.y += py * amp * 0.7;
     }
     cam.lookAt(pose.look);
     // a touch of FOV "breathing" with scroll speed sells the motion
@@ -191,8 +196,10 @@ function Orb({ glyph, hd }: { glyph: Texture; hd: boolean }) {
     const breath = film.reducedMotion ? 0 : Math.sin(t * 1.15);
     g.scale.setScalar(scale * (1 + breath * 0.008));
     // pointer: limited, elegant follow
-    g.rotation.y = film.pointer.sx * 0.22 + Math.sin(t * 0.3) * 0.04;
-    g.rotation.x = -film.pointer.sy * 0.16;
+    const lx = film.viewport.mobile ? film.tilt.sx : film.pointer.sx;
+    const ly = film.viewport.mobile ? film.tilt.sy : film.pointer.sy;
+    g.rotation.y = lx * 0.22 + Math.sin(t * 0.3) * 0.04;
+    g.rotation.x = -ly * 0.16;
     const sincePulse = now - film.pulseAt;
     const pulse = sincePulse < 3 ? Math.exp(-sincePulse * 2.6) : 0;
     const sinceTouch = now - touch.current.at;
@@ -210,7 +217,7 @@ function Orb({ glyph, hd }: { glyph: Texture; hd: boolean }) {
     (u.uTouch!.value as Vector3).copy(touch.current.dir).applyQuaternion(tmpQ.copy(g.quaternion).invert());
     u.uOpacity!.value = fade;
     u.uGlyphAmt!.value = smooth(range(scale, 0.25, 0.6)) * smooth(range(intro, 0.55, 1));
-    (u.uParallax!.value as Vector2).set(film.pointer.sx * 0.035, film.pointer.sy * 0.035);
+    (u.uParallax!.value as Vector2).set(lx * 0.035, ly * 0.035);
     // halo always faces the camera
     const h = halo.current!;
     h.quaternion.copy(state.camera.quaternion);
@@ -297,7 +304,8 @@ function Particles({ count }: { count: number }) {
     (u.uO1!.value as Vector3).copy(film.s < 1 ? pose.orb : (u.uO1!.value as Vector3));
     u.uPixel!.value = (size.height * viewport.dpr) / 2;
     // cursor field: the pointer, unprojected onto the plane through the current subject
-    if (film.pointer.active && !film.viewport.mobile && !film.reducedMotion) {
+    const touching = performance.now() - film.pointer.touchAt < 900;
+    if (((film.pointer.active && !film.viewport.mobile) || touching) && !film.reducedMotion) {
       mouseNdc.set(film.pointer.x, film.pointer.y, 0.5).unproject(state.camera).sub(state.camera.position).normalize();
       const dist = state.camera.position.distanceTo(pose.look);
       (u.uMouse!.value as Vector3).copy(state.camera.position).addScaledVector(mouseNdc, dist);
